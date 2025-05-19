@@ -1,0 +1,36 @@
+########################################
+# .NET build output (all project types)
+########################################
+[Bb]in/
+[Oo]bj/
+
+########################################
+# NuGet packages folder (classic layout)
+########################################
+packages/
+
+########################################
+# User- or machine-specific IDE files
+########################################
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# JetBrains Rider / ReSharper
+.idea/
+*.DotSettings.user
+_ReSharper.*/
+resharper-host/
+
+########################################
+# OS-level clutter
+########################################
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+# macOS
+.DS_Store
+# *nix editor backup files
+*~
