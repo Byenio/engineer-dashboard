@@ -34,3 +34,6 @@ Desktop.ini
 .DS_Store
 # *nix editor backup files
 *~
+
+# Environment
+.env
