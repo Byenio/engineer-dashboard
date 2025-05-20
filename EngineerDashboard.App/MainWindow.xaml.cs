@@ -10,10 +10,8 @@ namespace EngineerDashboard.App;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow(TelemetryService telemetryService)
+    public MainWindow()
     {
         InitializeComponent();
-
-        DataContext = new MainWindowViewModel(telemetryService);
     }
 }

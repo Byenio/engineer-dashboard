@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using EngineerDashboard.App.Services;
+using EngineerDashboard.App.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EngineerDashboard.App;
@@ -12,9 +13,20 @@ public partial class App : Application
     {
         ServiceCollection services = new ServiceCollection();
         
-        services.AddSingleton<TelemetryService>();
+        services.AddSingleton<TelemetryProvider>();
+
+        services.AddSingleton<MainWindowViewModel>();
         
-        services.AddTransient<MainWindow>();
+        services.AddSingleton<MainWindow>(sp =>
+        {
+            var vm = sp.GetRequiredService<MainWindowViewModel>();
+            var window = new MainWindow
+            {
+                DataContext = vm
+            };
+
+            return window;
+        });
         
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -23,11 +35,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
         
-        MainWindow mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-
-        MainWindow = mainWindow;
-        
-        MainWindow.Show();
+        var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+        mainWindow.Show();
     }
 
     protected override void OnExit(ExitEventArgs e)

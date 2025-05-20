@@ -1,15 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.Telemetry.Packets;
 
 namespace EngineerDashboard.App.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject, IDisposable
 {
     [ObservableProperty]
     private ushort _speed;
     
-    private readonly TelemetryService _telemetryService;
+    private readonly CompositeDisposable _telemetryClientSubscription = new();
 
     private void OnCarTelemetryDataReceive(CarTelemetryPacket packet)
     {
@@ -17,15 +19,24 @@ public partial class MainWindowViewModel : ObservableObject
         Speed = packet.carTelemetryData[playerId].speed;
     }
     
-    private void HookEvents()
+    private void HookEvents(TelemetryProvider telemetryProvider)
     {
-        _telemetryService.TelemetryClient.OnCarTelemetryDataReceive += OnCarTelemetryDataReceive;
+        var uiScheduler = SynchronizationContext.Current;
+        
+        _telemetryClientSubscription.Add(
+            telemetryProvider.CarTelemetryStream
+                .ObserveOn(uiScheduler)
+                .Subscribe(OnCarTelemetryDataReceive)
+            );
     }
     
-    public MainWindowViewModel(TelemetryService telemetryService)
+    public MainWindowViewModel(TelemetryProvider telemetryProvider)
     {
-        _telemetryService = telemetryService;
+        HookEvents(telemetryProvider);
+    }
 
-        HookEvents();
+    public void Dispose()
+    {
+        _telemetryClientSubscription.Dispose();
     }
 }
