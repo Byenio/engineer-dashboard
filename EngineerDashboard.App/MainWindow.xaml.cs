@@ -1,17 +1,17 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.App.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
+using EngineerDashboard.App.Views;
 
 namespace EngineerDashboard.App;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(SessionInfoView sessionInfoView)
     {
         InitializeComponent();
+        
+        SessionInfoControl.Content = sessionInfoView;
     }
 }

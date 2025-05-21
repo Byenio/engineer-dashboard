@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.App.ViewModels;
+using EngineerDashboard.App.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EngineerDashboard.App;
@@ -14,19 +15,15 @@ public partial class App : Application
         ServiceCollection services = new ServiceCollection();
         
         services.AddSingleton<TelemetryProvider>();
-
-        services.AddSingleton<MainWindowViewModel>();
         
-        services.AddSingleton<MainWindow>(sp =>
-        {
-            var vm = sp.GetRequiredService<MainWindowViewModel>();
-            var window = new MainWindow
-            {
-                DataContext = vm
-            };
-
-            return window;
-        });
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<SessionInfoViewModel>();
+        
+        services.AddSingleton<SessionInfoView>(sp => 
+            new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
+        );
+        
+        services.AddSingleton<MainWindow>();
         
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -34,7 +31,6 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
     }
@@ -45,7 +41,6 @@ public partial class App : Application
         {
             disposable.Dispose();
         }
-        
         base.OnExit(e);
     }
 }
