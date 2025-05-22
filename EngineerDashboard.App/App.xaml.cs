@@ -18,9 +18,19 @@ public partial class App : Application
         
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<SessionInfoViewModel>();
+        services.AddSingleton<DriversRowViewModel>();
+        services.AddSingleton<DriversTableViewModel>();
         
         services.AddSingleton<SessionInfoView>(sp => 
             new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
+        );
+
+        services.AddSingleton<DriversRowView>(sp => 
+            new DriversRowView { DataContext = sp.GetRequiredService<DriversRowViewModel>() }
+        );
+
+        services.AddSingleton<DriversTableView>(sp => 
+            new DriversTableView { DataContext = sp.GetRequiredService<DriversTableViewModel>() }
         );
         
         services.AddSingleton<MainWindow>();
