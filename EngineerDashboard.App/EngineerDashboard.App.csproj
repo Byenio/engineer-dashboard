@@ -15,11 +15,9 @@
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.4.25258.110" />
+      <PackageReference Include="System.Reactive" Version="6.0.1" />
+      <PackageReference Include="System.Reactive.Windows.Threading" Version="6.0.1" />
       <PackageReference Include="WPF-UI" Version="4.0.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Views\" />
     </ItemGroup>
 
 </Project>

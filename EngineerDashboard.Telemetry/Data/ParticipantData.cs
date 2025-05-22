@@ -42,7 +42,7 @@ public struct ParticipantData
     /// Name of the participant
     /// </summary>
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
-    public char[] name;
+    public byte[] name;
     /// <summary>
     /// <para>Player's UDP setting</para>
     /// <list type="table">

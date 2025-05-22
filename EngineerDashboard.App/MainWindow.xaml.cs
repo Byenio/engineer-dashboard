@@ -1,19 +1,18 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.App.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
+using EngineerDashboard.App.Views;
 
 namespace EngineerDashboard.App;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow(TelemetryService telemetryService)
+    public MainWindow(SessionInfoView sessionInfoView, DriversTableView driversTableView)
     {
         InitializeComponent();
-
-        DataContext = new MainWindowViewModel(telemetryService);
+        
+        SessionInfoControl.Content = sessionInfoView;
+        DriversTableView.Content = driversTableView;
     }
 }

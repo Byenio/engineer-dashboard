@@ -51,7 +51,7 @@ public struct FinalClassificationData
     /// <summary>
     /// Number of tyre stints up to maximum
     /// </summary>
-    public byte numTyreStings;
+    public byte numTyreStints;
     /// <summary>
     /// Actual tyres used by this driver
     /// </summary>

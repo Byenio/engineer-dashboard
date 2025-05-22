@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using EngineerDashboard.App.Services;
+using EngineerDashboard.App.ViewModels;
+using EngineerDashboard.App.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EngineerDashboard.App;
@@ -12,9 +14,26 @@ public partial class App : Application
     {
         ServiceCollection services = new ServiceCollection();
         
-        services.AddSingleton<TelemetryService>();
+        services.AddSingleton<TelemetryProvider>();
         
-        services.AddTransient<MainWindow>();
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<SessionInfoViewModel>();
+        services.AddSingleton<DriversRowViewModel>();
+        services.AddSingleton<DriversTableViewModel>();
+        
+        services.AddSingleton<SessionInfoView>(sp => 
+            new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
+        );
+
+        services.AddSingleton<DriversRowView>(sp => 
+            new DriversRowView { DataContext = sp.GetRequiredService<DriversRowViewModel>() }
+        );
+
+        services.AddSingleton<DriversTableView>(sp => 
+            new DriversTableView { DataContext = sp.GetRequiredService<DriversTableViewModel>() }
+        );
+        
+        services.AddSingleton<MainWindow>();
         
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -22,12 +41,8 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        
-        MainWindow mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-
-        MainWindow = mainWindow;
-        
-        MainWindow.Show();
+        var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+        mainWindow.Show();
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -36,7 +51,6 @@ public partial class App : Application
         {
             disposable.Dispose();
         }
-        
         base.OnExit(e);
     }
 }
