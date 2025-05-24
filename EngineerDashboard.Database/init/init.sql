@@ -62,7 +62,7 @@ CREATE TABLE Stints (
     pitStopTime INT NOT NULL
 );
 
--- Funkcja aktualizująca ELO
+
 CREATE OR REPLACE FUNCTION update_driver_elo()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -105,9 +105,35 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger
+
 CREATE TRIGGER trg_update_driver_elo
 AFTER INSERT ON RaceResults
 FOR EACH ROW
 EXECUTE FUNCTION update_driver_elo();
 
+
+CREATE OR REPLACE FUNCTION update_driver_rank()
+RETURNS TRIGGER AS $$
+DECLARE
+    newRankId INT;
+BEGIN
+    SELECT id INTO newRankId
+    FROM Ranks
+    WHERE 
+        pointsMin <= NEW.ELO AND
+        (pointsMax >= NEW.ELO OR pointsMax IS NULL)
+    LIMIT 1;
+
+    UPDATE Drivers
+    SET rankId = newRankId
+    WHERE id = NEW.id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_update_rank_after_elo_update
+AFTER UPDATE OF ELO ON Drivers
+FOR EACH ROW
+WHEN (OLD.ELO IS DISTINCT FROM NEW.ELO)
+EXECUTE FUNCTION update_driver_rank();
