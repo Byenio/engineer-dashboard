@@ -5,7 +5,7 @@ CREATE TABLE Ranks (
     name VARCHAR(20) NOT NULL,
     icon TEXT NOT NULL,
     pointsMin INT NOT NULL,
-    pointsMax INT NOT NULL
+    pointsMax INT
 );
 
 CREATE TABLE Drivers (
@@ -137,3 +137,12 @@ AFTER UPDATE OF ELO ON Drivers
 FOR EACH ROW
 WHEN (OLD.ELO IS DISTINCT FROM NEW.ELO)
 EXECUTE FUNCTION update_driver_rank();
+
+
+INSERT INTO Ranks (name, icon, pointsMin, pointsMax) VALUES
+('Bronze', '🥉', 0, 899),
+('Silver', '🥈', 900, 1099),
+('Gold', '🥇', 1100, 1399),
+('Platinum', '💎', 1400, 1799),
+('Master', '🧙‍♂️', 1800, 2499),
+('Champion', '🏆', 2500, NULL);
