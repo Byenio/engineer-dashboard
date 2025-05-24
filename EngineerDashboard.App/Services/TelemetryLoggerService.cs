@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using EngineerDashboard.Telemetry;
+using EngineerDashboard.Telemetry.Packets;
 
 namespace EngineerDashboard.App.Services;
 
@@ -15,19 +17,30 @@ public class TelemetryLoggerService : IDisposable
     private bool _headerWritten = false;
     private string? _logFilePath;
 
+    private byte _fastestLapDriverId;
+
     public TelemetryLoggerService(TelemetryProvider telemetryProvider)
     {
-        telemetryProvider.LapDataStream
-            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.LapDataPacket = packet));
+        telemetryProvider.CarDamageStream
+            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarDamagePacket = packet));
+        
+        telemetryProvider.CarStatusStream
+            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarStatusPacket = packet));
         
         telemetryProvider.CarTelemetryStream
             .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarTelemetryPacket = packet));
+
+        telemetryProvider.LapDataStream
+            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.LapDataPacket = packet));
         
         telemetryProvider.SessionStream
             .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.SessionPacket = packet));
 
         telemetryProvider.EventStream
-            .Subscribe(packet => HandleEvent(packet.eventStringCode));
+            .Subscribe(HandleEvent);
+
+        telemetryProvider.FinalClassificationStream
+            .Subscribe(HandleFinalClassification);
         
         _flushTimer = new Timer(_ => FlushCompletedRows(), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
     }
@@ -41,9 +54,9 @@ public class TelemetryLoggerService : IDisposable
         row.LastUpdated = DateTime.UtcNow;
     }
 
-    private void HandleEvent(char[] eventStringCode)
+    private void HandleEvent(EventPacket packet)
     {
-        string stringCode = new string(eventStringCode);
+        var stringCode = new string(packet.eventStringCode);
         
         switch (stringCode)
         {
@@ -53,7 +66,37 @@ public class TelemetryLoggerService : IDisposable
             case "SEND":
                 StopLogging();
                 break;
+            case "FTLP":
+                _fastestLapDriverId = packet.eventDetails.fastestLap.vehicleIdx;
+                break;
         }
+    }
+
+    private void HandleFinalClassification(FinalClassificationPacket packet)
+    {
+        var playerId = packet.header.playerCarIndex;
+
+        var data = packet.classificationData[(int)playerId];
+
+        var lines = File.ReadAllLines(_logFilePath).ToList();
+        
+        lines[0] += ",starting_position,finishing_position,fastest_lap,dnf,penalties_time";
+
+        var startingPosition = data.gridPosition;
+        var finishingPosition = data.position;
+        var hasDnf = data.resultStatus != ResultStatus.FINISHED;
+        var penaltiesTime = data.penaltiesTime;
+        var hasFastestLap = _fastestLapDriverId == playerId;
+
+        for (int i = 1; i < lines.Count; i++)
+        {
+            lines[i] += $",{startingPosition},{finishingPosition},{hasDnf},{penaltiesTime},{hasFastestLap}";
+        }
+        
+        File.WriteAllLines(_logFilePath, lines);
+        
+        _loggingActive = false;
+        _logFilePath = null;
     }
 
     private void StartLogging()
@@ -77,9 +120,6 @@ public class TelemetryLoggerService : IDisposable
         
         _flushTimer.Change(Timeout.Infinite, Timeout.Infinite);
         FlushCompletedRows();
-        
-        _loggingActive = false;
-        _logFilePath = null;
     }
     
     private void FlushCompletedRows()
@@ -95,7 +135,6 @@ public class TelemetryLoggerService : IDisposable
 
         foreach (var kvp in completed)
         {
-            Console.WriteLine(completed.Count);
             WriteRowToFile(kvp.Value);
             _rows.TryRemove(kvp.Key, out _);
         }
