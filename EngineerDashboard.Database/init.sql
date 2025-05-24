@@ -12,7 +12,7 @@ CREATE TABLE Ranks (
 
 CREATE TABLE Drivers (
     id BIGINT PRIMARY KEY auto_increment,
-    username VARCHAR(50) not null,
+    username VARCHAR(48) not null,
     ELO int not null default 1000,
     rankId int not null,
     FOREIGN KEY (rankId) REFERENCES Ranks(id)
@@ -20,7 +20,7 @@ CREATE TABLE Drivers (
 
 CREATE TABLE Tracks (
     id int PRIMARY KEY auto_increment,
-    name VARCHAR(50) not null
+    name VARCHAR(20) not null
 );
 
 CREATE TABLE Races (
@@ -41,7 +41,7 @@ CREATE TABLE RaceResults (
     hasFastestLap BOOLEAN not null,
     penalties int not null,
     dnf BOOLEAN not null,
-    sessionTime BIGINT not null,
+    sessionTime float not null,
     points int not null,
     carDamage int not null,
     FOREIGN KEY (raceId) REFERENCES Races(id),
@@ -52,10 +52,10 @@ CREATE TABLE Laps (
     id BIGINT PRIMARY KEY auto_increment,
     raceResultId BIGINT not null,
     position int not null,
-    tyreCompound enum('W','I','H','M','S') not null ,
+    tyreCompound int not null ,
     deltaToLeader int not null,
     deltaToCarInFront int not null,
-    tyreWear int not null,
+    tyreWear float not null,
     lapTime int not null,
     FOREIGN KEY (raceResultId) REFERENCES RaceResults(id)
 );
@@ -63,7 +63,7 @@ CREATE TABLE Laps (
 CREATE TABLE Stints (
     id BIGINT PRIMARY KEY auto_increment,  
     raceResultId BIGINT not null,
-    tyreCompound enum('W','I','H','M','S') not null,
+    tyreCompound int not null,
     startLap int not null,
     endLap int not null,
     pitStopTime int not null,
