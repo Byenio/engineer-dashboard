@@ -15,6 +15,7 @@ public partial class App : Application
         ServiceCollection services = new ServiceCollection();
         
         services.AddSingleton<TelemetryProvider>();
+        services.AddSingleton<TelemetryLoggerService>();
         
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<SessionInfoViewModel>();
@@ -41,6 +42,9 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        
+        _ = _serviceProvider.GetRequiredService<TelemetryLoggerService>();
+        
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
     }

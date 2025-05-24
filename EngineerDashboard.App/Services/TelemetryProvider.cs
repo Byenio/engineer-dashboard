@@ -12,6 +12,7 @@ public class TelemetryProvider : IDisposable
 
    private readonly Subject<CarDamagePacket> _carDamageSubject = new();
    private readonly Subject<CarSetupPacket> _carSetupSubject = new();
+   private readonly Subject<CarStatusPacket> _carStatusSubject = new();
    private readonly Subject<CarTelemetryPacket> _carTelemetrySubject = new();
    private readonly Subject<EventPacket> _eventSubject = new();
    private readonly Subject<FinalClassificationPacket> _finalClassificationSubject = new();
@@ -26,6 +27,7 @@ public class TelemetryProvider : IDisposable
    
    public IObservable<CarDamagePacket> CarDamageStream => _carDamageSubject;
    public IObservable<CarSetupPacket> CarSetupStream => _carSetupSubject;
+   public IObservable<CarStatusPacket> CarStatusStream => _carStatusSubject;
    public IObservable<CarTelemetryPacket> CarTelemetryStream => _carTelemetrySubject;
    public IObservable<EventPacket> EventStream => _eventSubject;
    public IObservable<FinalClassificationPacket> FinalClassificationStream => _finalClassificationSubject;
@@ -42,6 +44,7 @@ public class TelemetryProvider : IDisposable
    {
       _telemetryClient.OnCarDamageDataReceive += packet => _carDamageSubject.OnNext(packet);
       _telemetryClient.OnCarSetupDataReceive += packet => _carSetupSubject.OnNext(packet);
+      _telemetryClient.OnCarStatusDataReceive += packet => _carStatusSubject.OnNext(packet);
       _telemetryClient.OnCarTelemetryDataReceive += packet => _carTelemetrySubject.OnNext(packet);
       _telemetryClient.OnEventDetailsReceive += packet => _eventSubject.OnNext(packet);
       _telemetryClient.OnFinalClassificationDataReceive += packet => _finalClassificationSubject.OnNext(packet);
@@ -64,6 +67,9 @@ public class TelemetryProvider : IDisposable
       
       _carSetupSubject.OnCompleted();
       _carSetupSubject.Dispose();
+
+      _carStatusSubject.OnCompleted();
+      _carStatusSubject.Dispose();
       
       _carTelemetrySubject.OnCompleted();
       _carTelemetrySubject.Dispose();
