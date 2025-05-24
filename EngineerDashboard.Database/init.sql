@@ -38,9 +38,9 @@ CREATE TABLE RaceResults (
     driverId BIGINT not null,
     startPos int not null,
     finishPos int not null,
-    hasFastestLap BOOLEAN not null,
+    hasFastestLap int not null,
     penalties int not null,
-    dnf BOOLEAN not null,
+    dnf int not null,
     sessionTime float not null,
     points int not null,
     carDamage int not null,
@@ -69,3 +69,59 @@ CREATE TABLE Stints (
     pitStopTime int not null,
     FOREIGN KEY (raceResultId) REFERENCES RaceResults(id)
 );
+
+
+DELIMITER $$
+
+CREATE TRIGGER update_driver_elo
+AFTER INSERT ON RaceResults
+FOR EACH ROW
+BEGIN
+    DECLARE difficultyMultiplier INT;
+    DECLARE sfDiff INT;
+    DECLARE points INT;
+    DECLARE dmg INT;
+    DECLARE dnf INT;
+    DECLARE pen INT;
+    
+    DECLARE wghtSfDiff FLOAT;
+    DECLARE wghtPoints FLOAT;
+    DECLARE wghtDmg FLOAT;
+    DECLARE wghtDnf FLOAT;
+    DECLARE wghtPen FLOAT;
+    
+    DECLARE currentElo INT;
+    DECLARE deltaElo FLOAT;
+    DECLARE newElo INT;
+    
+    -- Pobierz difficultyMultiplier z tabeli Races
+    SELECT aiDifficulty + raceLength
+    INTO difficultyMultiplier
+    FROM Races
+    WHERE id = NEW.raceId;
+
+    -- Obliczenia komponentów
+    SET sfDiff = NEW.startPos - NEW.finishPos;
+    SET points = NEW.points + NEW.hasFastestLap;
+    SET dmg = 100 - NEW.carDamage;
+    SET dnf = (20 - NEW.startPos) * NEW.dnf;
+    SET pen = NEW.penalties;
+
+    SET wghtSfDiff = sfDiff * difficultyMultiplier;
+    SET wghtPoints = points * (difficultyMultiplier / 100);
+    SET wghtDmg = dmg * (difficultyMultiplier / 100);
+    SET wghtDnf = dnf * difficultyMultiplier;
+    SET wghtPen = pen;
+
+    -- Pobierz aktualne ELO kierowcy
+    SELECT ELO INTO currentElo FROM Drivers WHERE id = NEW.driverId;
+
+    -- Oblicz zmianę ELO
+    SET deltaElo = (wghtSfDiff + wghtPoints + wghtDmg - wghtDnf - wghtPen) / (currentElo / 10);
+    SET newElo = currentElo + ROUND(deltaElo);
+
+    -- Zaktualizuj ELO w tabeli Drivers
+    UPDATE Drivers SET ELO = newElo WHERE id = NEW.driverId;
+END$$
+
+DELIMITER ;
