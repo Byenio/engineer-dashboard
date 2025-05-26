@@ -13,12 +13,6 @@ public class PartialTelemetryRow
     public CarTelemetryPacket? CarTelemetryPacket { get; set; }
     public LapDataPacket? LapDataPacket { get; set; }
     public SessionPacket? SessionPacket { get; set; }
-    
-    public int? StartingPosition { get; set; }
-    public int? FinishingPosition { get; set; }
-    public bool? HasFastestLap { get; set; }
-    public bool? HasDnf { get; set; }
-    public int? PenaltiesTime { get; set; }
 
     public bool IsComplete => CarDamagePacket != null && CarStatusPacket != null && CarTelemetryPacket != null && LapDataPacket != null && SessionPacket != null;
 
@@ -50,8 +44,8 @@ public class PartialTelemetryRow
 
         var carStatusString = string.Join(',',
             Math.Round((double)carStatusData?.fuelInTank, 3),
-            carStatusData?.actualTyreCompound,
-            carStatusData?.visualTyreCompound,
+            (byte?)carStatusData?.actualTyreCompound,
+            (byte?)carStatusData?.visualTyreCompound,
             carStatusData?.tyresAgeLaps,
             carStatusData?.ersStoreEnergy
             );
