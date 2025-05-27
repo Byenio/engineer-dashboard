@@ -4,18 +4,81 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:EngineerDashboard.App.Views"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              d:DesignHeight="900" d:DesignWidth="1600">
+    <UserControl.Resources>
+        <Style x:Key="NonInteractiveListView" TargetType="{x:Type ui:ListViewItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="0 2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ui:ListViewItem}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <FontFamily x:Key="JetBrainsMonoExtraBold">pack://application,,,/Assets/Fonts/#JetBrains Mono ExtraBold</FontFamily>
+        
+        <Style x:Key="HeaderContnent" TargetType="{x:Type ui:TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Margin" Value="4 1" />
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <ListView ItemsSource="{Binding Drivers}" 
-                  IsSynchronizedWithCurrentItem="True"
-                  BorderThickness="0"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Height="20" Margin="10 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+
+            <ui:TextBlock Grid.Column="0" Text="#" Style="{StaticResource HeaderContnent}" />
+            <ui:TextBlock Grid.Column="1" Text="Driver" Style="{StaticResource HeaderContnent}" />
+            <ui:TextBlock Grid.Column="2" Text="DRS" Style="{StaticResource HeaderContnent}" />
+            <ui:TextBlock Grid.Column="3" Text="Interval" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="4" Text="Leader" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="5" Text="Tyre" Style="{StaticResource HeaderContnent}" TextAlignment="Center"/>
+            <ui:TextBlock Grid.Column="6" Text="Tyre Age" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="7" Text="Pits" Style="{StaticResource HeaderContnent}" TextAlignment="Center"/>
+            <ui:TextBlock Grid.Column="8" Text="Sector 1" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="9" Text="Sector 2" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="10" Text="Last Lap" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="11" Text="Tyre Wear" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+        </Grid>
+        
+        <ui:ListView Grid.Row="1"
+                     ItemsSource="{Binding Drivers}" 
+                     IsSynchronizedWithCurrentItem="True"
+                     BorderThickness="0"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Margin="10"
+                     ItemContainerStyle="{StaticResource NonInteractiveListView}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <views:DriversRowView />
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+        </ui:ListView>
     </Grid>
 </UserControl>

@@ -5,19 +5,113 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:local="clr-namespace:EngineerDashboard.App.Views"
+             xmlns:helpers="clr-namespace:EngineerDashboard.App.Helpers"
+             xmlns:converters="clr-namespace:EngineerDashboard.App.Converters"
              mc:Ignorable="d"
              d:DesignHeight="40" d:DesignWidth="1600">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        
+        <FontFamily x:Key="JetBrainsMonoExtraBold">pack://application,,,/Assets/Fonts/#JetBrains Mono ExtraBold</FontFamily>
+        
+        <Style x:Key="DriversRowContent" TargetType="{x:Type ui:TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Margin" Value="4 1" />
+        </Style>
+        
+        <Style TargetType="UserControl">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                    <Setter Property="Background" Value="#3300FF00" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
-
-        <ui:TextBlock Grid.Column="0" Text="{Binding CarPosition}" />
-        <ui:TextBlock Grid.Column="1" Text="{Binding Name}" />
-        <ui:TextBlock Grid.Column="2" Text="{Binding Team}" />
-        <ui:TextBlock Grid.Column="3" Text="{Binding AverageTyresWear}" />
+        
+        <ui:TextBlock
+            Grid.Column="0"
+            Text="{Binding CarPositionString}"
+            Style="{StaticResource DriversRowContent}"/>
+        <ui:TextBlock
+            Grid.Column="1"
+            Text="{Binding DriverName}"
+            Foreground="{Binding TeamColor}"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="2"
+            Text="DRS"
+            Foreground="{Binding DrsColor}"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="3"
+            Text="{Binding DeltaInFrontString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="4"
+            Text="{Binding DeltaLeaderString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="5"
+            Text="{Binding VisualTyreCompoundString}"
+            Visibility="{Binding ShowTyreCompound, Converter={StaticResource BoolToVisibilityConverter}}"
+            Foreground="{Binding TyreColor}"
+            TextAlignment="Center"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="5"
+            Text="PIT" Visibility="{Binding ShowPit,
+            Converter={StaticResource BoolToVisibilityConverter}}"
+            Foreground="DarkRed"
+            TextAlignment="Center"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="6"
+            Text="{Binding TyreAgeLapsString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="7"
+            Text="{Binding NumPitStops}"
+            TextAlignment="Center"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="8"
+            Text="{Binding Sector1TimeString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="9"
+            Text="{Binding Sector2TimeString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="10"
+            Text="{Binding LastLapTimeString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="11"
+            Text="{Binding AverageTyresWear}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
     </Grid>
 </UserControl>
