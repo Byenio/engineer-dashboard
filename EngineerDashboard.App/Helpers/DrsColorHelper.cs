@@ -5,19 +5,17 @@ namespace EngineerDashboard.App.Helpers;
 
 public static class DrsColorHelper
 {
-    public static Brush GetBrush(bool drsAllowed, bool drsOpen)
+    public static Brush GetBrush(byte drsAllowed, byte drsOpen)
     {
-        if (drsOpen)
+        if (drsOpen == 1)
         {
             return Brushes.GreenYellow;
         }
-        else if (drsAllowed)
+        if (drsAllowed == 1)
         {
             return Brushes.DarkOliveGreen;
         }
-        else
-        {
-            return Brushes.DimGray;
-        }
+        
+        return Brushes.DimGray;
     }
 }

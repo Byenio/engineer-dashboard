@@ -137,7 +137,7 @@ public struct CarStatusData
     ///     </item>
     /// </list>
     /// </summary>
-    public bool drsAllowed;
+    public byte drsAllowed;
     /// <summary>
     /// <para>Distance where DRS will be available</para>
     /// <list type="table">

@@ -2,7 +2,7 @@
 
 public static class TimeHelper
 {
-    public static string FormatMsToString(uint ms)
+    public static string FormatMsToLapTimeString(uint ms)
     {
         TimeSpan ts = TimeSpan.FromMilliseconds(ms);
         
@@ -11,6 +11,28 @@ public static class TimeHelper
             ts.Seconds,
             ts.Milliseconds);
 
+        return formatted;
+    }
+    
+    public static string FormatMsToSectorString(ushort ms)
+    {
+        TimeSpan ts = TimeSpan.FromMilliseconds(ms);
+        
+        string formatted = string.Format("{0}.{1:D3}",
+            (int)ts.TotalSeconds,
+            ts.Milliseconds);
+
+        return formatted;
+    }
+
+    public static string FormatMsToDeltaString(ushort ms)
+    {
+        TimeSpan ts = TimeSpan.FromMilliseconds(ms);
+        
+        string formatted = string.Format("+{0}.{1:D3}",
+            (int)ts.TotalSeconds,
+            ts.Milliseconds);
+        
         return formatted;
     }
 }

@@ -89,7 +89,7 @@ public struct CarTelemetryData
     ///     </item>
     /// </list>
     /// </summary>
-    public bool drs;
+    public byte drs;
     /// <summary>
     /// Rev lights indictor (percentage)
     /// </summary>
