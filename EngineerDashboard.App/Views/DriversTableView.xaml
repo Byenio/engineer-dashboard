@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:EngineerDashboard.App.Views"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              d:DesignHeight="900" d:DesignWidth="1600">
     <Grid>
-        <ListView ItemsSource="{Binding Drivers}" 
+        <ui:ListView ItemsSource="{Binding Drivers}" 
                   IsSynchronizedWithCurrentItem="True"
                   BorderThickness="0"
                   ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -16,6 +17,6 @@
                     <views:DriversRowView />
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+        </ui:ListView>
     </Grid>
 </UserControl>

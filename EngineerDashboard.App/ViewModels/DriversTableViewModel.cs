@@ -46,6 +46,18 @@ public partial class DriversTableViewModel : ObservableObject, IDisposable
                 .ObserveOn(uiContext)
                 .Subscribe(OnLapDataReceive)
         );
+
+        _telemetrySubscription.Add(
+            telemetryProvider.CarStatusStream
+                .ObserveOn(uiContext)
+                .Subscribe(OnCarStatusDataReceive)
+        );
+        
+        _telemetrySubscription.Add(
+            telemetryProvider.CarTelemetryStream
+                .ObserveOn(uiContext)
+                .Subscribe(OnCarTelemetryDataReceive)
+        );
     }
 
     private void OnParticipantsDataReceive(ParticipantsPacket packet)
@@ -72,6 +84,22 @@ public partial class DriversTableViewModel : ObservableObject, IDisposable
         }
 
         SortByPosition();
+    }
+
+    private void OnCarStatusDataReceive(CarStatusPacket packet)
+    {
+        foreach (var driver in Drivers)
+        {
+            driver.UpdateFromCarStatusPacket(packet);
+        }
+    }
+
+    private void OnCarTelemetryDataReceive(CarTelemetryPacket packet)
+    {
+        foreach (var driver in Drivers)
+        {
+            driver.UpdateFromCarTelemetryPacket(packet);
+        }
     }
 
     public void SortByPosition()

@@ -8,6 +8,10 @@
         mc:Ignorable="d"
         Title="Race Engineer Dashboard" Height="900" Width="1600">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <!-- <ui:Badge Appearance="Success"> -->
         <!--     <TextBox Text="Connected" /> -->
         <!-- </ui:Badge> -->
@@ -23,7 +27,7 @@
         <!--            HorizontalAlignment="Center"  -->
         <!--            VerticalAlignment="Center"  -->
         <!--            FontSize="24"/> -->
-        <UserControl x:Name="SessionInfoControl"/>
-        <UserControl x:Name="DriversTableView"/>
+        <UserControl x:Name="SessionInfoControl" Grid.Row="0" />
+        <UserControl x:Name="DriversTableView" Grid.Row="1" />
     </Grid>
 </Window>

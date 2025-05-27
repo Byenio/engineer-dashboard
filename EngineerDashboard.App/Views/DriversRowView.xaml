@@ -5,19 +5,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:local="clr-namespace:EngineerDashboard.App.Views"
+             xmlns:helpers="clr-namespace:EngineerDashboard.App.Helpers"
+             xmlns:converters="clr-namespace:EngineerDashboard.App.Converters"
              mc:Ignorable="d"
              d:DesignHeight="40" d:DesignWidth="1600">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="160" />
             <ColumnDefinition Width="400" />
         </Grid.ColumnDefinitions>
 
-        <ui:TextBlock Grid.Column="0" Text="{Binding CarPosition}" />
-        <ui:TextBlock Grid.Column="1" Text="{Binding Name}" />
-        <ui:TextBlock Grid.Column="2" Text="{Binding Team}" />
-        <ui:TextBlock Grid.Column="3" Text="{Binding AverageTyresWear}" />
+        <ui:TextBlock Grid.Column="0" Text="{Binding CarPositionString}" FontWeight="Bold" />
+        <ui:TextBlock Grid.Column="1" Text="{Binding DriverName}" Foreground="{Binding TeamColor}" FontWeight="Bold" />
+        <ui:TextBlock Grid.Column="2" Text="DRS" Foreground="{Binding DrsColor}" FontWeight="Bold" />
+        <ui:TextBlock Grid.Column="3" Text="{Binding DeltaInFrontString}" FontWeight="Bold" TextAlignment="Right" />
+        <ui:TextBlock Grid.Column="4" Text="{Binding DeltaLeaderString}" FontWeight="Bold" TextAlignment="Right" />
+        <ui:TextBlock Grid.Column="5" Text="{Binding VisualTyreCompoundString}" Visibility="{Binding ShowTyreCompound, Converter={StaticResource BoolToVisibilityConverter}}" Foreground="{Binding TyreColor}" FontWeight="Bold" TextAlignment="Center" />
+        <ui:TextBlock Grid.Column="5" Text="PIT" Visibility="{Binding ShowPit, Converter={StaticResource BoolToVisibilityConverter}}" Foreground="DarkRed" FontWeight="Bold" TextAlignment="Center" />
+        <ui:TextBlock Grid.Column="6" Text="{Binding TyreAgeLapsString}" FontWeight="Bold" TextAlignment="Right" />
+        <ui:TextBlock Grid.Column="7" Text="{Binding LastLapTimeString}" FontWeight="Bold" TextAlignment="Right" />
+        
+        <ui:TextBlock Grid.Column="9" Text="{Binding AverageTyresWear}" FontWeight="Bold" TextAlignment="Right" />
     </Grid>
 </UserControl>
