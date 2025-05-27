@@ -6,7 +6,9 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:EngineerDashboard.App"
         mc:Ignorable="d"
-        Title="Race Engineer Dashboard" Height="900" Width="1600">
+        Title="Race Engineer Dashboard" Height="900" Width="1600"
+        Background="#121212"
+        Foreground="LightGray">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
