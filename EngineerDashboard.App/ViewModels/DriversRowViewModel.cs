@@ -88,8 +88,8 @@ public partial class DriversRowViewModel : ObservableObject
         DeltaLeader = data.deltaToRaceLeaderInMS;
         PitStatus = data.pitStatus;
         NumPitStops = data.numPitStops;
-        Sector1Time = data.sector1TimeInMS;
-        Sector2Time = data.sector2TimeInMS;
+        Sector1Time = data.sector1TimeInMS != 0 ? data.sector1TimeInMS : Sector1Time;
+        Sector2Time = data.sector2TimeInMS != 0 ? data.sector2TimeInMS : Sector2Time;
         LastLapTime = data.lastLapTimeInMS;
     }
 
