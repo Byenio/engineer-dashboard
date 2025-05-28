@@ -1,6 +1,6 @@
 ﻿namespace EngineerDashboard.App.Helpers;
 
-public static class TimeHelper
+public static class Formatter
 {
     public static string FormatMsToLapTimeString(uint ms)
     {
