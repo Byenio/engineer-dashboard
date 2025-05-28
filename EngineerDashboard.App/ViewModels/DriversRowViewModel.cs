@@ -34,17 +34,17 @@ public partial class DriversRowViewModel : ObservableObject
     [ObservableProperty] private bool _showPit = false;
     
     public string CarPositionString => new string($"P{CarPosition}");
-    public string DeltaInFrontString => TimeHelper.FormatMsToDeltaString(DeltaInFront);
-    public string DeltaLeaderString => TimeHelper.FormatMsToDeltaString(DeltaLeader);
+    public string DeltaInFrontString => Formatter.FormatMsToDeltaString(DeltaInFront);
+    public string DeltaLeaderString => Formatter.FormatMsToDeltaString(DeltaLeader);
     public string VisualTyreCompoundString => new string($"({VisualTyreCompound.ToString()[..1]})");
     public string TyreAgeLapsString => new string($"{TyreAgeLaps} laps");
-    public string Sector1TimeString => TimeHelper.FormatMsToSectorString(Sector1Time);
-    public string Sector2TimeString => TimeHelper.FormatMsToSectorString(Sector2Time);
-    public string LastLapTimeString => TimeHelper.FormatMsToLapTimeString(LastLapTime);
+    public string Sector1TimeString => Formatter.FormatMsToSectorString(Sector1Time);
+    public string Sector2TimeString => Formatter.FormatMsToSectorString(Sector2Time);
+    public string LastLapTimeString => Formatter.FormatMsToLapTimeString(LastLapTime);
 
-    public Brush TeamColor => TeamColorHelper.GetBrush(Team);
-    public Brush DrsColor => DrsColorHelper.GetBrush(DrsAllowed, DrsOpen);
-    public Brush TyreColor => TyreColorHelper.GetBrush(VisualTyreCompound);
+    public Brush TeamColor => ColorHelper.GetTeamBrush(Team);
+    public Brush DrsColor => ColorHelper.GetDrsBrush(DrsAllowed, DrsOpen);
+    public Brush TyreColor => ColorHelper.GetTyreBrush(VisualTyreCompound);
     public Brush PlayerBorderColor => IsPlayer ? Brushes.Goldenrod : Brushes.Transparent;
 
     public DriversRowViewModel(int index)

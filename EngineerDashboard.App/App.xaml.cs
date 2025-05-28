@@ -21,6 +21,7 @@ public partial class App : Application
         services.AddSingleton<SessionInfoViewModel>();
         services.AddSingleton<DriversRowViewModel>();
         services.AddSingleton<DriversTableViewModel>();
+        services.AddSingleton<TyreCardViewModel>();
         
         services.AddSingleton<SessionInfoView>(sp => 
             new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
@@ -32,6 +33,10 @@ public partial class App : Application
 
         services.AddSingleton<DriversTableView>(sp => 
             new DriversTableView { DataContext = sp.GetRequiredService<DriversTableViewModel>() }
+        );
+
+        services.AddSingleton<TyreCardView>(sp => 
+            new TyreCardView { DataContext = sp.GetRequiredService<TyreCardViewModel>() }
         );
         
         services.AddSingleton<MainWindow>();

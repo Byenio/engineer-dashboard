@@ -6,30 +6,20 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:EngineerDashboard.App"
         mc:Ignorable="d"
-        Title="Race Engineer Dashboard" Height="900" Width="1600"
+        Title="Race Engineer Dashboard" Height="1000" Width="1800"
         Background="#121212"
         Foreground="LightGray">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="570" />
+            <RowDefinition Height="400" />
         </Grid.RowDefinitions>
         <!-- <ui:Badge Appearance="Success"> -->
         <!--     <TextBox Text="Connected" /> -->
         <!-- </ui:Badge> -->
-        <!-- <ui:ListView ItemsSource="{Binding TelemetryData}"> -->
-        <!--     <ui:ListView.View> -->
-        <!--         <ui:GridView> -->
-        <!--             <GridViewColumn Header="Speed" DisplayMemberBinding="{Binding Speed}" /> -->
-        <!--             <GridViewColumn Header="Throttle" DisplayMemberBinding="{Binding Throttle}" /> -->
-        <!--         </ui:GridView> -->
-        <!--     </ui:ListView.View> -->
-        <!-- </ui:ListView> -->
-        <!-- <ui:TextBlock Text="Telemetry Dashboard Placeholder"  -->
-        <!--            HorizontalAlignment="Center"  -->
-        <!--            VerticalAlignment="Center"  -->
-        <!--            FontSize="24"/> -->
-        <UserControl x:Name="SessionInfoControl" Grid.Row="0" />
+        <UserControl x:Name="SessionInfoView" Grid.Row="0" />
         <UserControl x:Name="DriversTableView" Grid.Row="1" />
+        <UserControl x:Name="TyreCardView" Grid.Row="2" />
     </Grid>
 </Window>

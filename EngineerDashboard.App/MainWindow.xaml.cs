@@ -8,11 +8,12 @@ namespace EngineerDashboard.App;
 
 public partial class MainWindow : Window
 {
-    public MainWindow(SessionInfoView sessionInfoView, DriversTableView driversTableView)
+    public MainWindow(SessionInfoView sessionInfoView, DriversTableView driversTableView, TyreCardView tyreCardView)
     {
         InitializeComponent();
         
-        SessionInfoControl.Content = sessionInfoView;
+        SessionInfoView.Content = sessionInfoView;
         DriversTableView.Content = driversTableView;
+        TyreCardView.Content = tyreCardView;
     }
 }
