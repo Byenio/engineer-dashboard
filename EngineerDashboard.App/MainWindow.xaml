@@ -15,11 +15,18 @@
             <RowDefinition Height="570" />
             <RowDefinition Height="400" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
         <!-- <ui:Badge Appearance="Success"> -->
         <!--     <TextBox Text="Connected" /> -->
         <!-- </ui:Badge> -->
-        <UserControl x:Name="SessionInfoView" Grid.Row="0" />
-        <UserControl x:Name="DriversTableView" Grid.Row="1" />
-        <UserControl x:Name="TyreCardView" Grid.Row="2" />
+        <UserControl x:Name="SessionInfoView" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" />
+        <UserControl x:Name="DriversTableView" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
+        <UserControl x:Name="TyreCardView" Grid.Row="2" Grid.Column="1" />
+        <UserControl x:Name="LapTimeChartView" Grid.Row="2" Grid.Column="2" />
     </Grid>
 </Window>
