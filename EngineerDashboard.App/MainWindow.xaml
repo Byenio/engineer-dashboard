@@ -28,5 +28,6 @@
         <UserControl x:Name="DriversTableView" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
         <UserControl x:Name="TyreCardView" Grid.Row="2" Grid.Column="1" />
         <UserControl x:Name="LapTimeChartView" Grid.Row="2" Grid.Column="2" />
+        <UserControl x:Name="TyreWearChartView" Grid.Row="2" Grid.Column="3" />
     </Grid>
 </Window>

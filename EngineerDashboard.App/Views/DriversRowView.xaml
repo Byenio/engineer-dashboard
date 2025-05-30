@@ -110,7 +110,7 @@
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
             Grid.Column="11"
-            Text="{Binding AverageTyresWear}"
+            Text="{Binding MaxTyreWear}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
     </Grid>

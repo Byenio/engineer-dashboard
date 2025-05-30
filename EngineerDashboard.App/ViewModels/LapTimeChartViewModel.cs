@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -18,6 +17,7 @@ namespace EngineerDashboard.App.ViewModels;
 public partial class LapTimeChartViewModel : ObservableObject, IDisposable
 {
     private readonly CompositeDisposable _telemetrySubscription = new();
+    private readonly SKTypeface _customTypeface;
     
     [ObservableProperty] private ObservableCollection<ObservablePoint> _lapTimes;
     [ObservableProperty] private ISeries[] _series;
@@ -33,12 +33,12 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
             LabelsPaint = new SolidColorPaint
             {
                 Color = new SKColor(230, 230, 230),
-                // SKTypeface = SKTypeface.FromFile("../Assets/Fonts/JetBrainsMono-Bold.ttf")
+                SKTypeface = _customTypeface
             },
             NamePaint = new SolidColorPaint
             {
                 Color = new SKColor(230, 230, 230),
-                // SKTypeface = SKTypeface.FromFile("Assets/Fonts/JetBrainsMono-Bold.ttf")
+                SKTypeface = _customTypeface
             }
         }
     ];
@@ -51,12 +51,12 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
             LabelsPaint = new SolidColorPaint
             {
                 Color = new SKColor(230, 230, 230),
-                // SKTypeface = SKTypeface.FromFile("Assets/Fonts/JetBrainsMono-Bold.ttf")
+                SKTypeface = _customTypeface
             },
             NamePaint = new SolidColorPaint
             {
                 Color = new SKColor(230, 230, 230),
-                // SKTypeface = SKTypeface.FromFile("Assets/Fonts/JetBrainsMono-Bold.ttf")
+                SKTypeface = _customTypeface
             },
             SeparatorsPaint = new SolidColorPaint
             {
@@ -67,6 +67,8 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
 
     public LapTimeChartViewModel(TelemetryProvider telemetryProvider)
     {
+        _customTypeface = LoadCustomFont();
+        
         LapTimes = new ObservableCollection<ObservablePoint>();
         Series = new ISeries[]
         {
@@ -85,6 +87,25 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
         HookEvents(telemetryProvider);
     }
 
+    private SKTypeface LoadCustomFont()
+    {
+        try
+        {
+            var uri = new Uri("pack://application:,,,/Assets/Fonts/JetBrainsMono-Regular.ttf");
+            var info = System.Windows.Application.GetResourceStream(uri);
+            if (info != null)
+            {
+                return SKTypeface.FromStream(info.Stream);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to load custom font: {ex.Message}");
+        }
+        
+        return SKTypeface.FromFamilyName("Consolas") ?? SKTypeface.Default;
+    }
+
     private void HookEvents(TelemetryProvider telemetryProvider)
     {
         _telemetrySubscription.Add(
@@ -98,6 +119,8 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
         var playerId = packet.header.playerCarIndex;
 
         if (playerId != packet.carIdx) return;
+
+        if (NumLaps > packet.numLaps) LapTimes.Clear();
 
         if (NumLaps == packet.numLaps) return;
 
@@ -124,7 +147,6 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
                 NumLaps = packet.numLaps;
             }
         }
-
     }
 
     partial void OnLapTimesChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
@@ -134,6 +156,7 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
+        _customTypeface?.Dispose();
         _telemetrySubscription.Dispose();
     }
 }

@@ -27,7 +27,7 @@ public partial class DriversRowViewModel : ObservableObject
     [ObservableProperty] private ushort _sector1Time;
     [ObservableProperty] private ushort _sector2Time;
     [ObservableProperty] private uint _lastLapTime;
-    [ObservableProperty] private string _averageTyresWear;
+    [ObservableProperty] private string _maxTyreWear;
     [ObservableProperty] private bool _isPlayer = false;
 
     [ObservableProperty] private bool _showTyreCompound = true;
@@ -66,7 +66,7 @@ public partial class DriversRowViewModel : ObservableObject
         Sector1Time = 0;
         Sector2Time = 0;
         LastLapTime = 0;
-        AverageTyresWear = "0%";
+        MaxTyreWear = "0%";
     }
     
     #region UpdateFromPacket handlers
@@ -96,7 +96,7 @@ public partial class DriversRowViewModel : ObservableObject
     public void UpdateFromCarDamagePacket(CarDamagePacket packet)
     {
         var data = packet.carDamageData[Index];
-        AverageTyresWear = $"{data.tyresWear.Average():F0}%";
+        MaxTyreWear = $"{data.tyresWear.Max():F0}%";
     }
 
     public void UpdateFromCarStatusPacket(CarStatusPacket packet)
