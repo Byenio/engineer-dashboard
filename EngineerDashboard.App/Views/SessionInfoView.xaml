@@ -36,6 +36,6 @@
                       Grid.Column="3" Style="{StaticResource InfoText}" />
         <ui:TextBlock Text="{Binding SafetyCarStatusString}"
                       Visibility="{Binding ShowSafetyCarStatusString, Converter={StaticResource BoolToVisibilityConverter}}"
-                      Grid.Column="3" Style="{StaticResource InfoText}" Foreground="Yellow" />
+                      Grid.Column="3" Style="{StaticResource InfoText}" Foreground="Gold" />
     </Grid>
 </UserControl>

@@ -19,18 +19,11 @@
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Margin" Value="4 1" />
         </Style>
-        
-        <Style TargetType="UserControl">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                    <Setter Property="Background" Value="#3300FF00" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
     
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="200" />
             <ColumnDefinition Width="60" />
@@ -45,71 +38,76 @@
             <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
         
-        <ui:TextBlock
+        <Border
             Grid.Column="0"
+            Background="{Binding PlayerBorderColor}"
+            CornerRadius="2"
+            Margin="0 2 3 2"/>
+        <ui:TextBlock
+            Grid.Column="1"
             Text="{Binding CarPositionString}"
             Style="{StaticResource DriversRowContent}"/>
         <ui:TextBlock
-            Grid.Column="1"
+            Grid.Column="2"
             Text="{Binding DriverName}"
             Foreground="{Binding TeamColor}"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="2"
+            Grid.Column="3"
             Text="DRS"
             Foreground="{Binding DrsColor}"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="3"
+            Grid.Column="4"
             Text="{Binding DeltaInFrontString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="4"
+            Grid.Column="5"
             Text="{Binding DeltaLeaderString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="5"
+            Grid.Column="6"
             Text="{Binding VisualTyreCompoundString}"
             Visibility="{Binding ShowTyreCompound, Converter={StaticResource BoolToVisibilityConverter}}"
             Foreground="{Binding TyreColor}"
             TextAlignment="Center"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="5"
+            Grid.Column="7"
             Text="PIT" Visibility="{Binding ShowPit,
             Converter={StaticResource BoolToVisibilityConverter}}"
             Foreground="DarkRed"
             TextAlignment="Center"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="6"
+            Grid.Column="7"
             Text="{Binding TyreAgeLapsString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="7"
+            Grid.Column="8"
             Text="{Binding NumPitStops}"
             TextAlignment="Center"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="8"
+            Grid.Column="9"
             Text="{Binding Sector1TimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="9"
+            Grid.Column="10"
             Text="{Binding Sector2TimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="10"
+            Grid.Column="11"
             Text="{Binding LastLapTimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="11"
+            Grid.Column="12"
             Text="{Binding MaxTyreWear}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />

@@ -25,7 +25,7 @@
         
         <FontFamily x:Key="JetBrainsMonoExtraBold">pack://application,,,/Assets/Fonts/#JetBrains Mono ExtraBold</FontFamily>
         
-        <Style x:Key="HeaderContnent" TargetType="{x:Type ui:TextBlock}">
+        <Style x:Key="HeaderContent" TargetType="{x:Type ui:TextBlock}">
             <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Margin" Value="4 1" />
@@ -39,6 +39,7 @@
 
         <Grid Grid.Row="0" Height="20" Margin="10 0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="60" />
@@ -53,18 +54,18 @@
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
 
-            <ui:TextBlock Grid.Column="0" Text="#" Style="{StaticResource HeaderContnent}" />
-            <ui:TextBlock Grid.Column="1" Text="Driver" Style="{StaticResource HeaderContnent}" />
-            <ui:TextBlock Grid.Column="2" Text="DRS" Style="{StaticResource HeaderContnent}" />
-            <ui:TextBlock Grid.Column="3" Text="Interval" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="4" Text="Leader" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="5" Text="Tyre" Style="{StaticResource HeaderContnent}" TextAlignment="Center"/>
-            <ui:TextBlock Grid.Column="6" Text="Tyre Age" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="7" Text="Pits" Style="{StaticResource HeaderContnent}" TextAlignment="Center"/>
-            <ui:TextBlock Grid.Column="8" Text="Sector 1" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="9" Text="Sector 2" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="10" Text="Last Lap" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="11" Text="Tyre Wear" Style="{StaticResource HeaderContnent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="1" Text="#" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="2" Text="Driver" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="3" Text="DRS" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="4" Text="Interval" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="5" Text="Leader" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="6" Text="Tyre" Style="{StaticResource HeaderContent}" TextAlignment="Center"/>
+            <ui:TextBlock Grid.Column="7" Text="Tyre Age" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="8" Text="Pits" Style="{StaticResource HeaderContent}" TextAlignment="Center"/>
+            <ui:TextBlock Grid.Column="9" Text="Sector 1" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="10" Text="Sector 2" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="11" Text="Last Lap" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="12" Text="Tyre Wear" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
         </Grid>
         
         <ui:ListView Grid.Row="1"
