@@ -61,6 +61,9 @@ public partial class App : Application
         _ = _serviceProvider.GetRequiredService<TelemetryLoggerService>();
         
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+        var mainViewModel = _serviceProvider.GetRequiredService<MainWindowViewModel>();
+        mainWindow.DataContext = mainViewModel;
+        
         mainWindow.Show();
     }
 

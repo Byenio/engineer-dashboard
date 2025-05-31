@@ -86,6 +86,26 @@
       <Resource Include="Assets\Fonts\JetBrainsMono-ThinItalic.ttf">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <None Remove="Assets\Icons\charts-icon.png" />
+      <Resource Include="Assets\Icons\charts-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Icons\database-icon.png" />
+      <Resource Include="Assets\Icons\database-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Icons\drivers-table-icon.png" />
+      <Resource Include="Assets\Icons\drivers-table-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Icons\local-files-icon.png" />
+      <Resource Include="Assets\Icons\local-files-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Icons\settings-icon.png" />
+      <Resource Include="Assets\Icons\car-data-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
 </Project>
