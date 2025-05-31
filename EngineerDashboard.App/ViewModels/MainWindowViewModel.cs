@@ -15,6 +15,8 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly TyreCardView _tyreCardView;
     private readonly LapTimeChartView _lapTimeChartView;
     private readonly TyreWearChartView _tyreWearChartView;
+    private readonly FuelChartView _fuelChartView;
+    private readonly BatteryChartView _batteryChartView;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -23,7 +25,9 @@ public partial class MainWindowViewModel : ObservableObject
         None,
         Drivers,
         CarSetup,
-        Charts
+        Charts,
+        Inputs,
+        Database
     }
 
     private Page _currentPage = Page.None;
@@ -34,7 +38,9 @@ public partial class MainWindowViewModel : ObservableObject
         DriversTableView driversTableView,
         TyreCardView tyreCardView,
         LapTimeChartView lapTimeChartView,
-        TyreWearChartView tyreWearChartView)
+        TyreWearChartView tyreWearChartView,
+        FuelChartView fuelChartView,
+        BatteryChartView batteryChartView)
     {
         SessionInfoView = sessionInfoView;
 
@@ -42,6 +48,8 @@ public partial class MainWindowViewModel : ObservableObject
         _tyreCardView = tyreCardView;
         _lapTimeChartView = lapTimeChartView;
         _tyreWearChartView = tyreWearChartView;
+        _fuelChartView = fuelChartView;
+        _batteryChartView = batteryChartView;
 
         ShowDriversPage();
     }
@@ -76,6 +84,8 @@ public partial class MainWindowViewModel : ObservableObject
 
         RemoveFromParent(_lapTimeChartView);
         RemoveFromParent(_tyreWearChartView);
+        RemoveFromParent(_fuelChartView);
+        RemoveFromParent(_batteryChartView);
 
         var chartGrid = new Grid();
         chartGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -90,11 +100,29 @@ public partial class MainWindowViewModel : ObservableObject
         
         _tyreWearChartView.SetValue(Grid.ColumnProperty, 1);
         _tyreWearChartView.SetValue(Grid.RowProperty, 0);
+        
+        _fuelChartView.SetValue(Grid.ColumnProperty, 0);
+        _fuelChartView.SetValue(Grid.RowProperty, 1);
+        
+        _batteryChartView.SetValue(Grid.ColumnProperty, 1);
+        _batteryChartView.SetValue(Grid.RowProperty, 1);
 
         chartGrid.Children.Add(_lapTimeChartView);
         chartGrid.Children.Add(_tyreWearChartView);
+        chartGrid.Children.Add(_fuelChartView);
+        chartGrid.Children.Add(_batteryChartView);
 
         CurrentPageView = chartGrid;
+    }
+    
+    [RelayCommand]
+    private void ShowInputsPage()
+    {
+        if (_currentPage == Page.Inputs)
+            return;
+
+        _currentPage = Page.Inputs;
+        // CurrentPageView = _inputsChartView;
     }
 
     private void RemoveFromParent(UIElement element)

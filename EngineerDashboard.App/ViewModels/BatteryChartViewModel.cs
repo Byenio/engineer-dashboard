@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using EngineerDashboard.App.Helpers;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.Telemetry.Packets;
 using LiveChartsCore;
@@ -14,15 +13,12 @@ using SkiaSharp;
 
 namespace EngineerDashboard.App.ViewModels;
 
-public partial class TyreWearChartViewModel : ObservableObject, IDisposable
+public partial class BatteryChartViewModel : ObservableObject, IDisposable
 {
     private readonly CompositeDisposable _telemetrySubscription = new();
     private readonly SKTypeface _customTypeface;
     
-    [ObservableProperty] private ObservableCollection<ObservablePoint> _frontLeft;
-    [ObservableProperty] private ObservableCollection<ObservablePoint> _frontRight;
-    [ObservableProperty] private ObservableCollection<ObservablePoint> _rearLeft;
-    [ObservableProperty] private ObservableCollection<ObservablePoint> _rearRight;
+    [ObservableProperty] private ObservableCollection<ObservablePoint> _ers;
     [ObservableProperty] private ISeries[] _series;
     [ObservableProperty] private byte _numLaps = 0;
     [ObservableProperty] private bool _received = false;
@@ -31,7 +27,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
     [
         new Axis
         {
-            Name = "Tyre wear",
+            Name = "Battery usage",
             MinStep = 1,
             Labeler = value => $"{value:F0}",
             LabelsPaint = new SolidColorPaint
@@ -69,54 +65,21 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
         }
     ];
 
-    public TyreWearChartViewModel(TelemetryProvider telemetryProvider)
+    public BatteryChartViewModel(TelemetryProvider telemetryProvider)
     {
         _customTypeface = LoadCustomFont();
         
-        FrontLeft = new ObservableCollection<ObservablePoint>();
-        FrontRight = new ObservableCollection<ObservablePoint>();
-        RearLeft = new ObservableCollection<ObservablePoint>();
-        RearRight = new ObservableCollection<ObservablePoint>();
+        Ers = new ObservableCollection<ObservablePoint>();
         
         Series = new ISeries[]
         {
             new LineSeries<ObservablePoint>
             {
-                Values = FrontLeft,
-                Name = "Front Left",
+                Values = Ers,
+                Name = "Ers",
                 GeometrySize = 6,
                 Stroke = new SolidColorPaint(new SKColor(31, 119, 180), 2),
                 GeometryStroke = new SolidColorPaint(new SKColor(31, 119, 180), 2),
-                Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
-            },
-            new LineSeries<ObservablePoint>
-            {
-                Values = FrontRight,
-                Name = "Front Right",
-                GeometrySize = 6,
-                Stroke = new SolidColorPaint(new SKColor(95, 162, 220), 2),
-                GeometryStroke = new SolidColorPaint(new SKColor(95, 162, 220), 2),
-                Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
-            },
-            new LineSeries<ObservablePoint>
-            {
-                Values = RearLeft,
-                Name = "Rear Left",
-                GeometrySize = 6,
-                Stroke = new SolidColorPaint(new SKColor(255, 127, 14), 2),
-                GeometryStroke = new SolidColorPaint(new SKColor(255, 127, 14), 2),
-                Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
-            },
-            new LineSeries<ObservablePoint>
-            {
-                Values = RearRight,
-                Name = "Rear Right",
-                GeometrySize = 6,
-                Stroke = new SolidColorPaint(new SKColor(255, 174, 89), 2),
-                GeometryStroke = new SolidColorPaint(new SKColor(255, 174, 89), 2),
                 Fill = null,
                 YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
             }
@@ -152,9 +115,9 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
                 .Subscribe(OnLapDataReceived));
         
         _telemetrySubscription.Add(
-            telemetryProvider.CarDamageStream
+            telemetryProvider.CarStatusStream
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(OnCarDamageDataReceived));
+                .Subscribe(OnCarStatusDataReceived));
     }
 
     private void OnLapDataReceived(LapDataPacket packet)
@@ -163,10 +126,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
 
         if (NumLaps > packet.lapData[playerId].currentLapNum)
         {
-            FrontLeft.Clear();
-            FrontRight.Clear();
-            RearLeft.Clear();
-            RearRight.Clear();
+            Ers.Clear();
         }
 
         if (NumLaps == packet.lapData[playerId].currentLapNum) return;
@@ -175,36 +135,21 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
         Received = false;
     }
 
-    private void OnCarDamageDataReceived(CarDamagePacket packet)
+    private void OnCarStatusDataReceived(CarStatusPacket packet)
     {
         var playerId = packet.header.playerCarIndex;
-        var data = packet.carDamageData[playerId];
+        var data = packet.carStatusData[playerId];
         
         if (NumLaps > 1 && !Received)
         {
-            FrontLeft.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[2], 2)));
-            FrontRight.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[3], 2)));
-            RearLeft.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[0], 2)));
-            RearRight.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[1], 2)));
+            Ers.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.ersStoreEnergy / 40000, 2)));
             
             Received = true;
         }
 
     }
 
-    partial void OnFrontLeftChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
-    {
-        OnPropertyChanged(nameof(Series));
-    }
-    partial void OnFrontRightChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
-    {
-        OnPropertyChanged(nameof(Series));
-    }
-    partial void OnRearLeftChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
-    {
-        OnPropertyChanged(nameof(Series));
-    }
-    partial void OnRearRightChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
+    partial void OnErsChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
     {
         OnPropertyChanged(nameof(Series));
     }

@@ -106,6 +106,10 @@
       <Resource Include="Assets\Icons\car-data-icon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <None Remove="Assets\Icons\inputs-icon.png" />
+      <Resource Include="Assets\Icons\inputs-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
 </Project>
