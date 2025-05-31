@@ -80,9 +80,16 @@ public partial class MainWindowViewModel : ObservableObject
         var chartGrid = new Grid();
         chartGrid.ColumnDefinitions.Add(new ColumnDefinition());
         chartGrid.ColumnDefinitions.Add(new ColumnDefinition());
+        chartGrid.RowDefinitions.Add(new RowDefinition());
+        chartGrid.RowDefinitions.Add(new RowDefinition());
+        
+        chartGrid.SetValue(Grid.MarginProperty, new Thickness(30, 0, 30, 0));
 
         _lapTimeChartView.SetValue(Grid.ColumnProperty, 0);
+        _lapTimeChartView.SetValue(Grid.RowProperty, 0);
+        
         _tyreWearChartView.SetValue(Grid.ColumnProperty, 1);
+        _tyreWearChartView.SetValue(Grid.RowProperty, 0);
 
         chartGrid.Children.Add(_lapTimeChartView);
         chartGrid.Children.Add(_tyreWearChartView);

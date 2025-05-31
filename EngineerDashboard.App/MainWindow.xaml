@@ -6,17 +6,13 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:converters="clr-namespace:EngineerDashboard.App.Converters"
         mc:Ignorable="d"
-        Title="Race Engineer Dashboard" Height="1000" Width="1800"
+        Title="Race Engineer Dashboard" Height="800" Width="1600"
         Background="#121212"
         Foreground="LightGray">
-    <Window.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="400" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -26,7 +22,7 @@
         </Grid.ColumnDefinitions>
         
         <StackPanel Grid.Row="0"
-                    Grid.RowSpan="3"
+                    Grid.RowSpan="2"
                     Grid.Column="0"
                     Margin="20 10 10 10"
                     VerticalAlignment="Center"
@@ -57,36 +53,12 @@
             </Button>
         </StackPanel>
         
-        <ContentControl Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
+        <ContentControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                        Margin=" 0 10"
                         Content="{Binding SessionInfoView}" />
         
         <ContentControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
                         Content="{Binding CurrentPageView}" />
-        
-        <!-- <UserControl -->
-        <!--     x:Name="SessionInfoView" -->
-        <!--     Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" -->
-        <!--     Margin="0 10" /> -->
-        <!-- -->
-        <!-- <UserControl -->
-        <!--     x:Name="DriversTableView" -->
-        <!--     Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" -->
-        <!--     Visibility="{Binding IsDriversPageVisible, Converter={StaticResource BoolToVisibilityConverter}}" /> -->
-        <!-- -->
-        <!-- <UserControl -->
-        <!--     x:Name="TyreCardView" -->
-        <!--     Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" -->
-        <!--     Visibility="{Binding IsCarSetupVisible, Converter={StaticResource BoolToVisibilityConverter}}" /> -->
-        <!-- -->
-        <!-- <UserControl -->
-        <!--     x:Name="LapTimeChartView" -->
-        <!--     Grid.Row="1" Grid.Column="1" -->
-        <!--     Visibility="{Binding IsChartPageVisible, Converter={StaticResource BoolToVisibilityConverter}}" /> -->
-        <!-- -->
-        <!-- <UserControl -->
-        <!--     x:Name="TyreWearChartView" -->
-        <!--     Grid.Row="1" Grid.Column="2" -->
-        <!--     Visibility="{Binding IsChartPageVisible, Converter={StaticResource BoolToVisibilityConverter}}" /> -->
         
     </Grid>
 </Window>

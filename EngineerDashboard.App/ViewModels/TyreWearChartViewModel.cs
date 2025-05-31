@@ -31,7 +31,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
     [
         new Axis
         {
-            Name = "Lap Number",
+            Name = "Tyre Wear",
             MinStep = 1,
             Labeler = value => $"{value:F0}",
             LabelsPaint = new SolidColorPaint

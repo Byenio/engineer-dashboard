@@ -27,7 +27,7 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
     [
         new Axis
         {
-            Name = "Lap Number",
+            Name = "Laptime",
             MinStep = 1,
             Labeler = value => $"{value:F0}",
             LabelsPaint = new SolidColorPaint
