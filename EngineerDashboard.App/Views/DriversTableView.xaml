@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:EngineerDashboard.App.Views"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="900" d:DesignWidth="1600">
+             d:DesignHeight="1000" d:DesignWidth="1600">
     <UserControl.Resources>
         <Style x:Key="NonInteractiveListView" TargetType="{x:Type ui:ListViewItem}">
             <Setter Property="Background" Value="Transparent"/>
@@ -27,17 +27,17 @@
         
         <Style x:Key="HeaderContent" TargetType="{x:Type ui:TextBlock}">
             <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Margin" Value="4 1" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Margin" Value="4 0" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Height="20" Margin="10 0">
+        <Grid Grid.Row="0" Height="20" Margin="80 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="50" />
@@ -46,12 +46,12 @@
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
 
             <ui:TextBlock Grid.Column="1" Text="#" Style="{StaticResource HeaderContent}" />
@@ -60,12 +60,12 @@
             <ui:TextBlock Grid.Column="4" Text="Interval" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
             <ui:TextBlock Grid.Column="5" Text="Leader" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
             <ui:TextBlock Grid.Column="6" Text="Tyre" Style="{StaticResource HeaderContent}" TextAlignment="Center"/>
-            <ui:TextBlock Grid.Column="7" Text="Tyre Age" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="8" Text="Pits" Style="{StaticResource HeaderContent}" TextAlignment="Center"/>
-            <ui:TextBlock Grid.Column="9" Text="Sector 1" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="10" Text="Sector 2" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="11" Text="Last Lap" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
-            <ui:TextBlock Grid.Column="12" Text="Tyre Wear" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="7" Text="Wear" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="8" Text="Tyre Age" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="9" Text="Pits" Style="{StaticResource HeaderContent}" TextAlignment="Center"/>
+            <ui:TextBlock Grid.Column="10" Text="Sector 1" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="11" Text="Sector 2" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
+            <ui:TextBlock Grid.Column="12" Text="Last Lap" Style="{StaticResource HeaderContent}" TextAlignment="Right"/>
         </Grid>
         
         <ui:ListView Grid.Row="1"
@@ -73,7 +73,7 @@
                      IsSynchronizedWithCurrentItem="True"
                      BorderThickness="0"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     Margin="10"
+                     Margin="80 10"
                      ItemContainerStyle="{StaticResource NonInteractiveListView}">
             <ListView.ItemTemplate>
                 <DataTemplate>

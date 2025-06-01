@@ -14,7 +14,7 @@
             <Setter Property="Margin" Value="0 10" />
             <Setter Property="Width" Value="80" />
             <Setter Property="Height" Value="100" />
-            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="CornerRadius" Value="24" />
         </Style>
         
         <Style x:Key="TyreInfoBlock" TargetType="{x:Type Border}">
@@ -32,7 +32,6 @@
         <Style x:Key="TyreCardContent" TargetType="{x:Type ui:TextBlock}">
             <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="Margin" Value="0 10" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextAlignment" Value="Center" />
         </Style>
@@ -60,78 +59,84 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <ui:Card Height="320" Width="500" >
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="2*" />
-                    <RowDefinition Height="2*" />
-                    <RowDefinition Height="2*" />
-                    <RowDefinition Height="2*" />
-                </Grid.RowDefinitions>
-                
-                <ui:TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
-                              Text="{Binding CurrentTyreCompoundString}"
-                              Style="{StaticResource TyreCardHeader}"
-                              TextAlignment="Right"
-                              Foreground="{Binding VisualTyreCompoundColor}" />
-                
-                <ui:TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3"
-                              Text="{Binding CurrentTyreAgeLapsString}"
-                              TextAlignment="Left"
-                              Style="{StaticResource TyreCardHeader}" />
-                
-                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[2]}" />
-                <Border Grid.Row="1" Grid.Column="4" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[3]}" />
-                <Border Grid.Row="3" Grid.Column="1" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[0]}" />
-                <Border Grid.Row="3" Grid.Column="4" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[1]}" />
-                
-                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresInnerTemperatureString[2]}" Style="{StaticResource TyreInfoContentTop}"/>
+        <Grid Height="360" Width="540">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+            
+            <ui:TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                          Text="{Binding CurrentTyreCompoundString}"
+                          Style="{StaticResource TyreCardHeader}"
+                          TextAlignment="Right"
+                          Foreground="{Binding VisualTyreCompoundColor}" />
+            
+            <ui:TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3"
+                          Text="{Binding CurrentTyreAgeLapsString}"
+                          TextAlignment="Left"
+                          Style="{StaticResource TyreCardHeader}" />
+            
+            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[2]}" />
+            <Border Grid.Row="1" Grid.Column="4" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[3]}" />
+            <Border Grid.Row="3" Grid.Column="1" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[0]}" />
+            <Border Grid.Row="3" Grid.Column="4" Style="{StaticResource TyreTemperatureDot}" Background="{Binding TyresInnerTemperatureColor[1]}" />
+            
+            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresInnerTemperatureString[2]}" Style="{StaticResource TyreInfoContentTop}"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresPressureString[2]}" Style="{StaticResource TyreInfoContentBottom}"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresInnerTemperatureString[3]}" Style="{StaticResource TyreInfoContentTop}"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresPressureString[3]}" Style="{StaticResource TyreInfoContentBottom}"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresInnerTemperatureString[0]}" Style="{StaticResource TyreInfoContentTop}"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresPressureString[0]}" Style="{StaticResource TyreInfoContentBottom}"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresInnerTemperatureString[1]}" Style="{StaticResource TyreInfoContentTop}"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
+                <ui:TextBlock Text="{Binding TyresPressureString[1]}" Style="{StaticResource TyreInfoContentBottom}"/>
+            </Border>
+            
+            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[0]}">
+                <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
+                <ui:TextBlock Text="{Binding TyresWearString[2]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
-                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresPressureString[2]}" Style="{StaticResource TyreInfoContentBottom}"/>
+            </Border>
+            <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[2]}">
+                <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
+                <ui:TextBlock Text="{Binding TyresWearString[3]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
-                <Border Grid.Row="1" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresInnerTemperatureString[3]}" Style="{StaticResource TyreInfoContentTop}"/>
+            </Border>
+            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[1]}">
+                <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
+                <ui:TextBlock Text="{Binding TyresWearString[0]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
-                <Border Grid.Row="2" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresPressureString[3]}" Style="{StaticResource TyreInfoContentBottom}"/>
+            </Border>
+            <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[3]}">
+                <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
+                <ui:TextBlock Text="{Binding TyresWearString[1]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
-                <Border Grid.Row="3" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresInnerTemperatureString[0]}" Style="{StaticResource TyreInfoContentTop}"/>
-                </Border>
-                <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresPressureString[0]}" Style="{StaticResource TyreInfoContentBottom}"/>
-                </Border>
-                <Border Grid.Row="3" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresInnerTemperatureString[1]}" Style="{StaticResource TyreInfoContentTop}"/>
-                </Border>
-                <Border Grid.Row="4" Grid.Column="5" Style="{StaticResource TyreInfoBlock}">
-                    <ui:TextBlock Text="{Binding TyresPressureString[1]}" Style="{StaticResource TyreInfoContentBottom}"/>
-                </Border>
-                
-                <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[0]}">
-                    <ui:TextBlock Text="{Binding TyresWearString[2]}" Style="{StaticResource TyreCardContent}" />
-                </Border>
-                <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[2]}">
-                    <ui:TextBlock Text="{Binding TyresWearString[3]}" Style="{StaticResource TyreCardContent}" />
-                </Border>
-                <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[1]}">
-                    <ui:TextBlock Text="{Binding TyresWearString[0]}" Style="{StaticResource TyreCardContent}" />
-                </Border>
-                <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[3]}">
-                    <ui:TextBlock Text="{Binding TyresWearString[1]}" Style="{StaticResource TyreCardContent}" />
-                </Border>
-            </Grid>
-        </ui:Card>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

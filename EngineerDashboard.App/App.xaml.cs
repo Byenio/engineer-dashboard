@@ -24,6 +24,8 @@ public partial class App : Application
         services.AddSingleton<TyreCardViewModel>();
         services.AddSingleton<LapTimeChartViewModel>();
         services.AddSingleton<TyreWearChartViewModel>();
+        services.AddSingleton<FuelChartViewModel>();
+        services.AddSingleton<BatteryChartViewModel>();
         
         services.AddSingleton<SessionInfoView>(sp => 
             new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
@@ -48,6 +50,14 @@ public partial class App : Application
         services.AddSingleton<TyreWearChartView>(sp =>
             new TyreWearChartView { DataContext = sp.GetRequiredService<TyreWearChartViewModel>() }
         );
+
+        services.AddSingleton<FuelChartView>(sp =>
+            new FuelChartView { DataContext = sp.GetRequiredService<FuelChartViewModel>() }
+        );
+
+        services.AddSingleton<BatteryChartView>(sp =>
+            new BatteryChartView { DataContext = sp.GetRequiredService<BatteryChartViewModel>() }
+        );
         
         services.AddSingleton<MainWindow>();
         
@@ -61,6 +71,9 @@ public partial class App : Application
         _ = _serviceProvider.GetRequiredService<TelemetryLoggerService>();
         
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+        var mainViewModel = _serviceProvider.GetRequiredService<MainWindowViewModel>();
+        mainWindow.DataContext = mainViewModel;
+        
         mainWindow.Show();
     }
 

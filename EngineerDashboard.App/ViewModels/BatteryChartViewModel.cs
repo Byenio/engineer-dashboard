@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using EngineerDashboard.App.Helpers;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.Telemetry.Packets;
 using LiveChartsCore;
@@ -14,20 +13,21 @@ using SkiaSharp;
 
 namespace EngineerDashboard.App.ViewModels;
 
-public partial class LapTimeChartViewModel : ObservableObject, IDisposable
+public partial class BatteryChartViewModel : ObservableObject, IDisposable
 {
     private readonly CompositeDisposable _telemetrySubscription = new();
     private readonly SKTypeface _customTypeface;
     
-    [ObservableProperty] private ObservableCollection<ObservablePoint> _lapTimes;
+    [ObservableProperty] private ObservableCollection<ObservablePoint> _ers;
     [ObservableProperty] private ISeries[] _series;
-    [ObservableProperty] private byte _numLaps;
+    [ObservableProperty] private byte _numLaps = 0;
+    [ObservableProperty] private bool _received = false;
     
     public Axis[] XAxes =>
     [
         new Axis
         {
-            Name = "Laptime",
+            Name = "Battery usage",
             MinStep = 1,
             Labeler = value => $"{value:F0}",
             LabelsPaint = new SolidColorPaint
@@ -47,7 +47,7 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
     [
         new Axis
         {
-            Labeler = value => Formatter.FormatMsToLapTimeString((uint)value),
+            Labeler = value => $"{value:F0}%",
             LabelsPaint = new SolidColorPaint
             {
                 Color = new SKColor(230, 230, 230),
@@ -65,22 +65,23 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
         }
     ];
 
-    public LapTimeChartViewModel(TelemetryProvider telemetryProvider)
+    public BatteryChartViewModel(TelemetryProvider telemetryProvider)
     {
         _customTypeface = LoadCustomFont();
         
-        LapTimes = new ObservableCollection<ObservablePoint>();
+        Ers = new ObservableCollection<ObservablePoint>();
+        
         Series = new ISeries[]
         {
             new LineSeries<ObservablePoint>
             {
-                Values = LapTimes,
-                Name = "Player Lap Times",
+                Values = Ers,
+                Name = "Ers",
                 GeometrySize = 6,
-                Stroke = new SolidColorPaint(new SKColor(255, 155, 0), 2),
-                GeometryStroke = new SolidColorPaint(new SKColor(255, 155, 0), 2),
+                Stroke = new SolidColorPaint(new SKColor(31, 119, 180), 2),
+                GeometryStroke = new SolidColorPaint(new SKColor(31, 119, 180), 2),
                 Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Formatter.FormatMsToLapTimeString((uint)point.Coordinate.PrimaryValue)}"
+                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
             }
         };
 
@@ -109,47 +110,46 @@ public partial class LapTimeChartViewModel : ObservableObject, IDisposable
     private void HookEvents(TelemetryProvider telemetryProvider)
     {
         _telemetrySubscription.Add(
-            telemetryProvider.SessionHistoryStream
+            telemetryProvider.LapDataStream
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(OnSessionHistoryDataReceived));
+                .Subscribe(OnLapDataReceived));
+        
+        _telemetrySubscription.Add(
+            telemetryProvider.CarStatusStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(OnCarStatusDataReceived));
     }
 
-    private void OnSessionHistoryDataReceived(SessionHistoryPacket packet)
+    private void OnLapDataReceived(LapDataPacket packet)
     {
         var playerId = packet.header.playerCarIndex;
 
-        if (playerId != packet.carIdx) return;
-
-        if (NumLaps > packet.numLaps) LapTimes.Clear();
-
-        if (NumLaps == packet.numLaps) return;
-
-        if (NumLaps < packet.numLaps - 1 || packet.numLaps == 0)
+        if (NumLaps > packet.lapData[playerId].currentLapNum)
         {
-            LapTimes.Clear();
-            for (int i = 0; i < packet.numLaps; i++)
-            {
-                var lapData = packet.lapHistoryData[i];
-                if (lapData.lapTimeInMS != 0)
-                {
-                    LapTimes.Add(new ObservablePoint(i + 1, lapData.lapTimeInMS));
-                }
-            }
-            NumLaps = packet.numLaps;
+            Ers.Clear();
         }
-        else if (packet.numLaps > 1)
-        {
-            var latestLap = packet.lapHistoryData[packet.numLaps - 2];
-            
-            if (latestLap.lapTimeInMS != 0)
-            {
-                LapTimes.Add(new ObservablePoint(packet.numLaps - 1, latestLap.lapTimeInMS));
-                NumLaps = packet.numLaps;
-            }
-        }
+
+        if (NumLaps == packet.lapData[playerId].currentLapNum) return;
+        
+        NumLaps = packet.lapData[playerId].currentLapNum;
+        Received = false;
     }
 
-    partial void OnLapTimesChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
+    private void OnCarStatusDataReceived(CarStatusPacket packet)
+    {
+        var playerId = packet.header.playerCarIndex;
+        var data = packet.carStatusData[playerId];
+        
+        if (NumLaps > 1 && !Received)
+        {
+            Ers.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.ersStoreEnergy / 40000, 2)));
+            
+            Received = true;
+        }
+
+    }
+
+    partial void OnErsChanged(ObservableCollection<ObservablePoint> oldValue, ObservableCollection<ObservablePoint> newValue)
     {
         OnPropertyChanged(nameof(Series));
     }

@@ -31,7 +31,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
     [
         new Axis
         {
-            Name = "Lap Number",
+            Name = "Tyre wear",
             MinStep = 1,
             Labeler = value => $"{value:F0}",
             LabelsPaint = new SolidColorPaint
@@ -88,7 +88,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
                 Stroke = new SolidColorPaint(new SKColor(31, 119, 180), 2),
                 GeometryStroke = new SolidColorPaint(new SKColor(31, 119, 180), 2),
                 Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 0)}%"
+                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
             },
             new LineSeries<ObservablePoint>
             {
@@ -98,7 +98,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
                 Stroke = new SolidColorPaint(new SKColor(95, 162, 220), 2),
                 GeometryStroke = new SolidColorPaint(new SKColor(95, 162, 220), 2),
                 Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 0)}%"
+                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
             },
             new LineSeries<ObservablePoint>
             {
@@ -108,7 +108,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
                 Stroke = new SolidColorPaint(new SKColor(255, 127, 14), 2),
                 GeometryStroke = new SolidColorPaint(new SKColor(255, 127, 14), 2),
                 Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 0)}%"
+                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
             },
             new LineSeries<ObservablePoint>
             {
@@ -118,7 +118,7 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
                 Stroke = new SolidColorPaint(new SKColor(255, 174, 89), 2),
                 GeometryStroke = new SolidColorPaint(new SKColor(255, 174, 89), 2),
                 Fill = null,
-                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 0)}%"
+                YToolTipLabelFormatter = point => $"Lap {point.Coordinate.SecondaryValue:F0}: {Math.Round(point.Coordinate.PrimaryValue, 2)}%"
             }
         };
 
@@ -182,10 +182,10 @@ public partial class TyreWearChartViewModel : ObservableObject, IDisposable
         
         if (NumLaps > 1 && !Received)
         {
-            FrontLeft.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[2], 0)));
-            FrontRight.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[3], 0)));
-            RearLeft.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[0], 0)));
-            RearRight.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[1], 0)));
+            FrontLeft.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[2], 2)));
+            FrontRight.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[3], 2)));
+            RearLeft.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[0], 2)));
+            RearRight.Add(new ObservablePoint(NumLaps - 1, Math.Round(data.tyresWear[1], 2)));
             
             Received = true;
         }

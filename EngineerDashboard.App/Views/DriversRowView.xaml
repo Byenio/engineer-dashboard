@@ -8,15 +8,15 @@
              xmlns:helpers="clr-namespace:EngineerDashboard.App.Helpers"
              xmlns:converters="clr-namespace:EngineerDashboard.App.Converters"
              mc:Ignorable="d"
-             d:DesignHeight="40" d:DesignWidth="1600">
+             d:DesignHeight="800" d:DesignWidth="1600">
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         
-        <FontFamily x:Key="JetBrainsMonoExtraBold">pack://application,,,/Assets/Fonts/#JetBrains Mono ExtraBold</FontFamily>
+        <FontFamily x:Key="JetBrainsMonoBold">pack://application,,,/Assets/Fonts/#JetBrains Mono Regular</FontFamily>
         
         <Style x:Key="DriversRowContent" TargetType="{x:Type ui:TextBlock}">
-            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoBold}" />
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="Margin" Value="4 1" />
         </Style>
     </UserControl.Resources>
@@ -30,12 +30,12 @@
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="80" />
-            <ColumnDefinition Width="70" />
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="100" />
             <ColumnDefinition Width="80" />
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="120" />
-            <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
         
         <Border
@@ -75,7 +75,7 @@
             TextAlignment="Center"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="7"
+            Grid.Column="6"
             Text="PIT" Visibility="{Binding ShowPit,
             Converter={StaticResource BoolToVisibilityConverter}}"
             Foreground="DarkRed"
@@ -83,32 +83,32 @@
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
             Grid.Column="7"
-            Text="{Binding TyreAgeLapsString}"
+            Text="{Binding MaxTyreWear}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
             Grid.Column="8"
+            Text="{Binding TyreAgeLapsString}"
+            TextAlignment="Right"
+            Style="{StaticResource DriversRowContent}" />
+        <ui:TextBlock
+            Grid.Column="9"
             Text="{Binding NumPitStops}"
             TextAlignment="Center"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="9"
+            Grid.Column="10"
             Text="{Binding Sector1TimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="10"
+            Grid.Column="11"
             Text="{Binding Sector2TimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
         <ui:TextBlock
-            Grid.Column="11"
-            Text="{Binding LastLapTimeString}"
-            TextAlignment="Right"
-            Style="{StaticResource DriversRowContent}" />
-        <ui:TextBlock
             Grid.Column="12"
-            Text="{Binding MaxTyreWear}"
+            Text="{Binding LastLapTimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
     </Grid>
