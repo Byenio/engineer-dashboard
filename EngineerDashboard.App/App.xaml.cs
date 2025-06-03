@@ -26,6 +26,8 @@ public partial class App : Application
         services.AddSingleton<TyreWearChartViewModel>();
         services.AddSingleton<FuelChartViewModel>();
         services.AddSingleton<BatteryChartViewModel>();
+        services.AddSingleton<InputsChartViewModel>();
+        services.AddSingleton<TelemetryChartViewModel>();
         
         services.AddSingleton<SessionInfoView>(sp => 
             new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
@@ -57,6 +59,14 @@ public partial class App : Application
 
         services.AddSingleton<BatteryChartView>(sp =>
             new BatteryChartView { DataContext = sp.GetRequiredService<BatteryChartViewModel>() }
+        );
+
+        services.AddSingleton<InputsChartView>(sp =>
+            new InputsChartView { DataContext = sp.GetRequiredService<InputsChartViewModel>() }
+        );
+
+        services.AddSingleton<TelemetryChartView>(sp =>
+            new TelemetryChartView { DataContext = sp.GetRequiredService<TelemetryChartViewModel>() }
         );
         
         services.AddSingleton<MainWindow>();

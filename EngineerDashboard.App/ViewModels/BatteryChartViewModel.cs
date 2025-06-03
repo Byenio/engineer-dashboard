@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using EngineerDashboard.App.Helpers;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.Telemetry.Packets;
 using LiveChartsCore;
@@ -67,7 +68,7 @@ public partial class BatteryChartViewModel : ObservableObject, IDisposable
 
     public BatteryChartViewModel(TelemetryProvider telemetryProvider)
     {
-        _customTypeface = LoadCustomFont();
+        _customTypeface = FontHelper.LoadCustomFont();
         
         Ers = new ObservableCollection<ObservablePoint>();
         
@@ -87,26 +88,6 @@ public partial class BatteryChartViewModel : ObservableObject, IDisposable
 
         HookEvents(telemetryProvider);
     }
-
-    private SKTypeface LoadCustomFont()
-    {
-        try
-        {
-            var uri = new Uri("pack://application:,,,/Assets/Fonts/JetBrainsMono-Regular.ttf");
-            var info = System.Windows.Application.GetResourceStream(uri);
-            if (info != null)
-            {
-                return SKTypeface.FromStream(info.Stream);
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed to load custom font: {ex.Message}");
-        }
-        
-        return SKTypeface.FromFamilyName("Consolas") ?? SKTypeface.Default;
-    }
-
     private void HookEvents(TelemetryProvider telemetryProvider)
     {
         _telemetrySubscription.Add(

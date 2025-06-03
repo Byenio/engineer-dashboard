@@ -117,22 +117,22 @@
                 <ui:TextBlock Text="{Binding TyresPressureString[1]}" Style="{StaticResource TyreInfoContentBottom}"/>
             </Border>
             
-            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[0]}">
+            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[2]}">
                 <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
                 <ui:TextBlock Text="{Binding TyresWearString[2]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
             </Border>
-            <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[2]}">
+            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[3]}">
                 <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
                 <ui:TextBlock Text="{Binding TyresWearString[3]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
             </Border>
-            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[1]}">
+            <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[0]}">
                 <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
                 <ui:TextBlock Text="{Binding TyresWearString[0]}" Style="{StaticResource TyreCardContent}" />
                 </Border>
             </Border>
-            <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[3]}">
+            <Border Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Style="{StaticResource TyreBlock}" Background="{Binding TyresWearColor[1]}">
                 <Border Background="#121212" Margin="10 10" Padding="0 28" CornerRadius="16">
                 <ui:TextBlock Text="{Binding TyresWearString[1]}" Style="{StaticResource TyreCardContent}" />
                 </Border>

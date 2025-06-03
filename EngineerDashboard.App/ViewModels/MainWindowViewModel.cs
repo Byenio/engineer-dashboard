@@ -17,6 +17,8 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly TyreWearChartView _tyreWearChartView;
     private readonly FuelChartView _fuelChartView;
     private readonly BatteryChartView _batteryChartView;
+    private readonly InputsChartView _inputsChartView;
+    private readonly TelemetryChartView _telemetryChartView;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -26,7 +28,7 @@ public partial class MainWindowViewModel : ObservableObject
         Drivers,
         CarSetup,
         Charts,
-        Inputs,
+        InputsAndTelemetry,
         Database
     }
 
@@ -40,7 +42,9 @@ public partial class MainWindowViewModel : ObservableObject
         LapTimeChartView lapTimeChartView,
         TyreWearChartView tyreWearChartView,
         FuelChartView fuelChartView,
-        BatteryChartView batteryChartView)
+        BatteryChartView batteryChartView,
+        InputsChartView inputsChartView,
+        TelemetryChartView telemetryChartView)
     {
         SessionInfoView = sessionInfoView;
 
@@ -50,6 +54,8 @@ public partial class MainWindowViewModel : ObservableObject
         _tyreWearChartView = tyreWearChartView;
         _fuelChartView = fuelChartView;
         _batteryChartView = batteryChartView;
+        _inputsChartView = inputsChartView;
+        _telemetryChartView = telemetryChartView;
 
         ShowDriversPage();
     }
@@ -116,13 +122,29 @@ public partial class MainWindowViewModel : ObservableObject
     }
     
     [RelayCommand]
-    private void ShowInputsPage()
+    private void ShowInputsAndTelemetryPage()
     {
-        if (_currentPage == Page.Inputs)
+        if (_currentPage == Page.InputsAndTelemetry)
             return;
-
-        _currentPage = Page.Inputs;
-        // CurrentPageView = _inputsChartView;
+        
+        _currentPage = Page.InputsAndTelemetry;
+        
+        RemoveFromParent(_inputsChartView);
+        RemoveFromParent(_telemetryChartView);
+        
+        var telemetryGrid = new Grid();
+        telemetryGrid.RowDefinitions.Add(new RowDefinition());
+        telemetryGrid.RowDefinitions.Add(new RowDefinition());
+        
+        telemetryGrid.SetValue(Grid.MarginProperty, new Thickness(30, 0, 30, 0));
+        
+        _inputsChartView.SetValue(Grid.RowProperty, 0);
+        _telemetryChartView.SetValue(Grid.RowProperty, 1);
+        
+        telemetryGrid.Children.Add(_inputsChartView);
+        telemetryGrid.Children.Add(_telemetryChartView);
+        
+        CurrentPageView = telemetryGrid;
     }
 
     private void RemoveFromParent(UIElement element)
