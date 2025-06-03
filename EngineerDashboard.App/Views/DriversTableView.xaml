@@ -52,6 +52,7 @@
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
 
             <ui:TextBlock Grid.Column="1" Text="#" Style="{StaticResource HeaderContent}" />

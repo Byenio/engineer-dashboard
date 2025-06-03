@@ -36,6 +36,7 @@
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         
         <Border
@@ -111,5 +112,10 @@
             Text="{Binding LastLapTimeString}"
             TextAlignment="Right"
             Style="{StaticResource DriversRowContent}" />
+        <Border
+            Grid.Column="13"
+            Background="{Binding PlayerBorderColor}"
+            CornerRadius="2"
+            Margin="0 2 3 2"/>
     </Grid>
 </UserControl>
