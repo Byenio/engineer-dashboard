@@ -20,6 +20,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly InputsChartView _inputsChartView;
     private readonly TelemetryChartView _telemetryChartView;
     private readonly CarInfoCardView _carInfoCardView;
+    private readonly DamageCardView _damageCardView;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -46,7 +47,8 @@ public partial class MainWindowViewModel : ObservableObject
         BatteryChartView batteryChartView,
         InputsChartView inputsChartView,
         TelemetryChartView telemetryChartView,
-        CarInfoCardView carInfoCardView)
+        CarInfoCardView carInfoCardView,
+        DamageCardView damageCardView)
     {
         SessionInfoView = sessionInfoView;
 
@@ -59,6 +61,7 @@ public partial class MainWindowViewModel : ObservableObject
         _inputsChartView = inputsChartView;
         _telemetryChartView = telemetryChartView;
         _carInfoCardView = carInfoCardView;
+        _damageCardView = damageCardView;
 
         ShowDriversPage();
     }
@@ -83,6 +86,7 @@ public partial class MainWindowViewModel : ObservableObject
         
         RemoveFromParent(_tyreCardView);
         RemoveFromParent(_carInfoCardView);
+        RemoveFromParent(_damageCardView);
 
         var carInfoGrid = new Grid();
         carInfoGrid.RowDefinitions.Add(new RowDefinition());
@@ -98,8 +102,13 @@ public partial class MainWindowViewModel : ObservableObject
         _tyreCardView.SetValue(Grid.RowProperty, 1);
         _tyreCardView.SetValue(Grid.ColumnProperty, 0);
         
+        _damageCardView.SetValue(Grid.RowProperty, 0);
+        _damageCardView.SetValue(Grid.ColumnProperty, 1);
+        _damageCardView.SetValue(Grid.RowSpanProperty, 2);
+        
         carInfoGrid.Children.Add(_tyreCardView);
         carInfoGrid.Children.Add(_carInfoCardView);
+        carInfoGrid.Children.Add(_damageCardView);
        
         CurrentPageView = carInfoGrid;
     }

@@ -118,7 +118,23 @@ public static class ColorHelper
             _ => new SolidColorBrush(Color.FromArgb(alpha, 139, 0, 0))
         };
     }
+    
+    public static Brush GetDamageColor(byte damage)
+    {
+        const byte alpha = 179;
 
+        return damage switch
+        {
+            0 => new SolidColorBrush(Color.FromArgb(alpha, 0, 128, 0)),
+            <= 10 => new SolidColorBrush(Color.FromArgb(alpha, 173, 255, 47)),
+            <= 20 => new SolidColorBrush(Color.FromArgb(alpha, 255, 255, 0)),
+            <= 30 => new SolidColorBrush(Color.FromArgb(alpha, 255, 165, 0)),
+            <= 50 => new SolidColorBrush(Color.FromArgb(alpha, 255, 140, 0)),
+            <= 70 => new SolidColorBrush(Color.FromArgb(alpha, 255, 69, 0)),
+            <= 90 => new SolidColorBrush(Color.FromArgb(alpha, 255, 0, 0)),
+            _ => new SolidColorBrush(Color.FromArgb(alpha, 139, 0, 0))
+        };
+    }
     
     private static readonly Dictionary<TyreCompound, TyreGripProfile> GripData = new()
     {
