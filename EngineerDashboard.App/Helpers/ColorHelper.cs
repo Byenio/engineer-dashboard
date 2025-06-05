@@ -45,6 +45,36 @@ public static class ColorHelper
         
         return Brushes.DimGray;
     }
+    
+    public static Brush GetPitBrush(byte pitLimiterStatus)
+    {
+        if (pitLimiterStatus == 1)
+        {
+            return Brushes.DarkRed;
+        }
+        
+        return Brushes.DimGray;
+    }
+
+    public static Brush GetFlagBrush(ZoneFlag flag)
+    {
+        switch (flag)
+        {
+            case ZoneFlag.GREEN:
+                return Brushes.ForestGreen;
+            
+            case ZoneFlag.BLUE:
+                return Brushes.DodgerBlue;
+            
+            case ZoneFlag.YELLOW:
+                return Brushes.Gold;
+            
+            case ZoneFlag.UNKNOWN:
+            case ZoneFlag.NONE:
+            default:
+                return Brushes.DimGray;
+        }
+    }
 
     public static Brush GetTyreTemperatureBrush(TyreCompound actualTyreCompound, byte temperature)
     {
@@ -73,17 +103,22 @@ public static class ColorHelper
 
     public static Brush GetTyreWearBrush(float tyreWear)
     {
-        if (tyreWear <= 10) return Brushes.Green;
-        if (tyreWear <= 20) return Brushes.ForestGreen;
-        if (tyreWear <= 30) return Brushes.GreenYellow;
-        if (tyreWear <= 40) return Brushes.Yellow;
-        if (tyreWear <= 50) return Brushes.Orange;
-        if (tyreWear <= 60) return Brushes.DarkOrange;
-        if (tyreWear <= 70) return Brushes.OrangeRed;
-        if (tyreWear <= 80) return Brushes.Red;
-        
-        return Brushes.DarkRed;
+        const byte alpha = 179;
+
+        return tyreWear switch
+        {
+            <= 10 => new SolidColorBrush(Color.FromArgb(alpha, 0, 128, 0)),
+            <= 20 => new SolidColorBrush(Color.FromArgb(alpha, 34, 139, 34)),
+            <= 30 => new SolidColorBrush(Color.FromArgb(alpha, 173, 255, 47)),
+            <= 40 => new SolidColorBrush(Color.FromArgb(alpha, 255, 255, 0)),
+            <= 50 => new SolidColorBrush(Color.FromArgb(alpha, 255, 165, 0)),
+            <= 60 => new SolidColorBrush(Color.FromArgb(alpha, 255, 140, 0)),
+            <= 70 => new SolidColorBrush(Color.FromArgb(alpha, 255, 69, 0)),
+            <= 80 => new SolidColorBrush(Color.FromArgb(alpha, 255, 0, 0)),
+            _ => new SolidColorBrush(Color.FromArgb(alpha, 139, 0, 0))
+        };
     }
+
     
     private static readonly Dictionary<TyreCompound, TyreGripProfile> GripData = new()
     {
