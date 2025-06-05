@@ -19,6 +19,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly BatteryChartView _batteryChartView;
     private readonly InputsChartView _inputsChartView;
     private readonly TelemetryChartView _telemetryChartView;
+    private readonly CarInfoCardView _carInfoCardView;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -44,7 +45,8 @@ public partial class MainWindowViewModel : ObservableObject
         FuelChartView fuelChartView,
         BatteryChartView batteryChartView,
         InputsChartView inputsChartView,
-        TelemetryChartView telemetryChartView)
+        TelemetryChartView telemetryChartView,
+        CarInfoCardView carInfoCardView)
     {
         SessionInfoView = sessionInfoView;
 
@@ -56,6 +58,7 @@ public partial class MainWindowViewModel : ObservableObject
         _batteryChartView = batteryChartView;
         _inputsChartView = inputsChartView;
         _telemetryChartView = telemetryChartView;
+        _carInfoCardView = carInfoCardView;
 
         ShowDriversPage();
     }
@@ -77,7 +80,28 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         _currentPage = Page.CarSetup;
-        CurrentPageView = _tyreCardView;
+        
+        RemoveFromParent(_tyreCardView);
+        RemoveFromParent(_carInfoCardView);
+
+        var carInfoGrid = new Grid();
+        carInfoGrid.RowDefinitions.Add(new RowDefinition());
+        carInfoGrid.RowDefinitions.Add(new RowDefinition());
+        carInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) });
+        carInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
+
+        carInfoGrid.SetValue(Grid.MarginProperty, new Thickness(30, 10, 30, 10));
+        
+        _carInfoCardView.SetValue(Grid.RowProperty, 0);
+        _carInfoCardView.SetValue(Grid.ColumnProperty, 0);
+        
+        _tyreCardView.SetValue(Grid.RowProperty, 1);
+        _tyreCardView.SetValue(Grid.ColumnProperty, 0);
+        
+        carInfoGrid.Children.Add(_tyreCardView);
+        carInfoGrid.Children.Add(_carInfoCardView);
+       
+        CurrentPageView = carInfoGrid;
     }
 
     [RelayCommand]
