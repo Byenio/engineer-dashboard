@@ -53,5 +53,10 @@ public struct WeatherForecastSample
     /// Air temperature change.
     /// 0 = up; 1 = down; 2 = no change
     /// </summary>
+    public sbyte airTemperatureChange;
+    /// <summary>
+    /// Air temperature change.
+    /// 0 = up; 1 = down; 2 = no change
+    /// </summary>
     public byte rainPercentage;
 }

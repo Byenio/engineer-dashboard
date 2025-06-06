@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using EngineerDashboard.Telemetry;
 using EngineerDashboard.Telemetry.Packets;
@@ -9,6 +11,8 @@ namespace EngineerDashboard.App.Services;
 
 public class TelemetryLoggerService : IDisposable
 {
+    private readonly CompositeDisposable _telemetrySubscription = new();
+    
     private readonly ConcurrentDictionary<float, PartialTelemetryRow> _rows = new();
     private readonly Lock _fileLock = new();
     private readonly Timer _flushTimer;
@@ -21,26 +25,47 @@ public class TelemetryLoggerService : IDisposable
 
     public TelemetryLoggerService(TelemetryProvider telemetryProvider)
     {
-        telemetryProvider.CarDamageStream
-            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarDamagePacket = packet));
+        _telemetrySubscription.Add(
+            telemetryProvider.CarDamageStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarDamagePacket = packet))
+        );
         
-        telemetryProvider.CarStatusStream
-            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarStatusPacket = packet));
+        _telemetrySubscription.Add(
+            telemetryProvider.CarStatusStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarStatusPacket = packet))
+        );
         
-        telemetryProvider.CarTelemetryStream
-            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarTelemetryPacket = packet));
+        _telemetrySubscription.Add(
+            telemetryProvider.CarTelemetryStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.CarTelemetryPacket = packet))
+        );
 
-        telemetryProvider.LapDataStream
-            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.LapDataPacket = packet));
+        _telemetrySubscription.Add(
+            telemetryProvider.LapDataStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.LapDataPacket = packet))
+        );
         
-        telemetryProvider.SessionStream
-            .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.SessionPacket = packet));
+        _telemetrySubscription.Add(
+            telemetryProvider.SessionStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(packet => OnPacket(packet.header.sessionTime, row => row.SessionPacket = packet))
+        );
 
-        telemetryProvider.EventStream
-            .Subscribe(HandleEvent);
+        _telemetrySubscription.Add(
+            telemetryProvider.EventStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(HandleEvent)
+        );
 
-        telemetryProvider.FinalClassificationStream
-            .Subscribe(HandleFinalClassification);
+        _telemetrySubscription.Add(
+            telemetryProvider.FinalClassificationStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(HandleFinalClassification)
+        );
         
         _flushTimer = new Timer(_ => FlushCompletedRows(), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
     }
@@ -164,6 +189,7 @@ public class TelemetryLoggerService : IDisposable
     public void Dispose()
     {
         _flushTimer.Dispose();
+        _telemetrySubscription.Dispose();
         FlushCompletedRows();
     }
 }
