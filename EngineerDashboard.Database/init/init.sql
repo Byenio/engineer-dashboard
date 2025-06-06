@@ -37,30 +37,33 @@ CREATE TABLE RaceResults (
     hasFastestLap BOOLEAN NOT NULL,
     penalties INT NOT NULL,
     dnf BOOLEAN NOT NULL,
-    sessionTime BIGINT NOT NULL,
+    sessionTime FLOAT NOT NULL,
     points INT NOT NULL,
     carDamage INT NOT NULL
 );
 
 CREATE TABLE Laps (
     id BIGINT PRIMARY KEY,
-    raceResultId BIGINT NOT NULL REFERENCES RaceResults(id),
+    raceId BIGINT NOT NULL REFERENCES Races(id),
+    driverId BIGINT NOT NULL REFERENCES Drivers(id),
     position INT NOT NULL,
     tyreCompound INT NOT NULL,
     deltaToLeader INT NOT NULL,
     deltaToCarInFront INT NOT NULL,
-    tyreWear INT NOT NULL,
+    tyreWear FLOAT NOT NULL,
     lapTime INT NOT NULL
 );
 
 CREATE TABLE Stints (
     id BIGINT PRIMARY KEY,  
-    raceResultId BIGINT NOT NULL REFERENCES RaceResults(id),
+    raceId BIGINT NOT NULL REFERENCES Races(id),
+    driverId BIGINT NOT NULL REFERENCES Drivers(id),
     tyreCompound INT NOT NULL,
     startLap INT NOT NULL,
     endLap INT NOT NULL,
     pitStopTime INT NOT NULL
 );
+
 
 CREATE OR REPLACE FUNCTION update_driver_elo()
 RETURNS TRIGGER AS $$
@@ -104,10 +107,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
 CREATE TRIGGER trg_update_driver_elo
 AFTER INSERT ON RaceResults
 FOR EACH ROW
 EXECUTE FUNCTION update_driver_elo();
+
 
 CREATE OR REPLACE FUNCTION update_driver_rank()
 RETURNS TRIGGER AS $$
@@ -135,13 +140,14 @@ FOR EACH ROW
 WHEN (OLD.ELO IS DISTINCT FROM NEW.ELO)
 EXECUTE FUNCTION update_driver_rank();
 
-INSERT INTO Ranks (id, name, icon, pointsMin, pointsMax) VALUES
-(1, 'Bronze', '🥉', 0, 899),
-(2, 'Silver', '🥈', 900, 1099),
-(3, 'Gold', '🥇', 1100, 1399),
-(4, 'Platinum', '💎', 1400, 1799),
-(5, 'Master', '🧙‍♂️', 1800, 2499),
-(6, 'Champion', '🏆', 2500, NULL);
+
+INSERT INTO Ranks (name, icon, pointsMin, pointsMax) VALUES
+('Bronze', '🥉', 0, 899),
+('Silver', '🥈', 900, 1099),
+('Gold', '🥇', 1100, 1399),
+('Platinum', '💎', 1400, 1799),
+('Master', '🧙‍♂️', 1800, 2499),
+('Champion', '🏆', 2500, NULL);
 
 INSERT INTO Tracks (id,name) VALUES
 (1,'Melbeourne'),
