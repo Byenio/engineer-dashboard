@@ -1,7 +1,10 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.App.ViewModels;
 using EngineerDashboard.App.Views;
+using EngineerDashboard.Database;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EngineerDashboard.App;
@@ -12,10 +15,24 @@ public partial class App : Application
 
     public App()
     {
+        DotNetEnv.Env.TraversePath().Load();
+        
         ServiceCollection services = new ServiceCollection();
         
         services.AddSingleton<TelemetryProvider>();
         services.AddSingleton<TelemetryLoggerService>();
+        
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            var connectionString = $"Host={Environment.GetEnvironmentVariable("DATABASE_ADDRESS")};" +
+                                   $"Port={Environment.GetEnvironmentVariable("DATABASE_PORT")};" +
+                                   $"Database={Environment.GetEnvironmentVariable("DATABASE_NAME")};" +
+                                   $"Username={Environment.GetEnvironmentVariable("DATABASE_USER")};" +
+                                   $"Password={Environment.GetEnvironmentVariable("DATABASE_PASSWORD")};";
+            
+            options.UseNpgsql(connectionString);
+        }, ServiceLifetime.Singleton);
+        services.AddSingleton<DatabaseService>();
         
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<SessionInfoViewModel>();
@@ -89,6 +106,21 @@ public partial class App : Application
         base.OnStartup(e);
         
         _ = _serviceProvider.GetRequiredService<TelemetryLoggerService>();
+        
+        _ = _serviceProvider.GetRequiredService<DatabaseService>();
+        
+        var dbContext = _serviceProvider.GetRequiredService<AppDbContext>();
+
+        if (!dbContext.Database.CanConnect())
+        {
+            MessageBox.Show(
+                "Database connection could not be established.",
+                "Database connection failure",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+                );
+            Shutdown();
+        }
         
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         var mainViewModel = _serviceProvider.GetRequiredService<MainWindowViewModel>();

@@ -9,13 +9,21 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\EngineerDashboard.Database\EngineerDashboard.Database.csproj" />
       <ProjectReference Include="..\EngineerDashboard.Telemetry\EngineerDashboard.Telemetry.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+      <PackageReference Include="DotNetEnv" Version="3.1.1" />
       <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc5.4" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.4.25258.110" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
       <PackageReference Include="System.Reactive" Version="6.0.1" />
       <PackageReference Include="System.Reactive.Windows.Threading" Version="6.0.1" />
       <PackageReference Include="WPF-UI" Version="4.0.2" />
