@@ -105,7 +105,7 @@ public class TelemetryLoggerService : IDisposable
 
         var lines = File.ReadAllLines(_logFilePath).ToList();
         
-        lines[0] += ",starting_position,finishing_position,fastest_lap,dnf,penalties_time";
+        lines[0] += ",starting_position,finishing_position,dnf,penalties_time,fastest_lap";
 
         var startingPosition = data.gridPosition;
         var finishingPosition = data.position;
