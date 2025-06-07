@@ -46,18 +46,25 @@ CREATE TABLE RaceEntries (
                              id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                              driverId INTEGER NOT NULL,
                              raceId INTEGER NOT NULL,
-                             teamId INTEGER,
-                             startPosition INTEGER CHECK (startPosition > 0),
-                             finishPosition INTEGER CHECK (finishPosition > 0),
-                             hasFastestLap BOOLEAN DEFAULT FALSE,
-                             penaltiesInSeconds INTEGER,
-                             hasDnf BOOLEAN DEFAULT FALSE,
-                             points INTEGER,
-                             averagedamage INTEGER CHECK (averagedamage >= 0 AND averagedamage <= 100),
+                             teamId INTEGER NOT NULL,
+                             startPosition INTEGER NOT NULL CHECK (startPosition > 0),
                              FOREIGN KEY (driverId) REFERENCES Drivers(id) ON DELETE CASCADE,
                              FOREIGN KEY (raceId) REFERENCES Races(id) ON DELETE CASCADE,
                              FOREIGN KEY (teamId) REFERENCES Teams(id) ON DELETE SET NULL,
                              CONSTRAINT unique_driver_race UNIQUE (driverId, raceId)
+);
+
+-- RaceResults: Stores results of a race for a driver's race entry
+CREATE TABLE RaceResults (
+                            id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                            raceEntryId INTEGER NOT NULL,
+                            finishPosition INTEGER NOT NULL CHECK (finishPosition > 0),
+                            hasFastestLap BOOLEAN DEFAULT FALSE,
+                            penaltiesInSeconds INTEGER NOT NULL,
+                            hasDnf BOOLEAN DEFAULT FALSE,
+                            points INTEGER NOT NULL,
+                            averagedamage INTEGER NOT NULL CHECK (averagedamage BETWEEN 0 AND 100),
+                            FOREIGN KEY (raceEntryId) REFERENCES RaceEntries(id) ON DELETE CASCADE
 );
 
 -- Laps table: Stores lap data for a driver's race entry
@@ -65,11 +72,11 @@ CREATE TABLE Laps (
                       id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                       raceEntryId INTEGER NOT NULL,
                       lapNum INTEGER NOT NULL CHECK (lapNum > 0),
-                      currentPosition INTEGER CHECK (currentPosition > 0),
-                      deltaToLeader INTEGER,
-                      deltaToCarInFront INTEGER,
-                      lastLapTime INTEGER,
-                      tyreWear INTEGER CHECK (tyreWear >= 0 AND tyreWear <= 100),
+                      currentPosition INTEGER NOT NULL CHECK (currentPosition > 0),
+                      deltaToLeader INTEGER NOT NULL,
+                      deltaToCarInFront INTEGER NOT NULL,
+                      lastLapTime INTEGER NOT NULL,
+                      tyreWear INTEGER NOT NULL CHECK (tyreWear >= 0 AND tyreWear <= 100),
                       FOREIGN KEY (raceEntryId) REFERENCES RaceEntries(id) ON DELETE CASCADE,
                       CONSTRAINT unique_race_entry_lap UNIQUE (raceEntryId, lapNum)
 );
@@ -79,9 +86,9 @@ CREATE TABLE Stints (
                         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                         raceEntryId INTEGER NOT NULL,
                         endLap INTEGER NOT NULL CHECK (endLap > 0),
-                        tyreCompound INTEGER,
-                        tyreWear INTEGER CHECK (tyreWear >= 0 AND tyreWear <= 100),
-                        pitStopTime INTEGER,
+                        tyreCompound INTEGER NOT NULL,
+                        tyreWear INTEGER NOT NULL CHECK (tyreWear >= 0 AND tyreWear <= 100),
+                        pitStopTime INTEGER NOT NULL,
                         FOREIGN KEY (raceEntryId) REFERENCES RaceEntries(id) ON DELETE CASCADE,
                         CONSTRAINT unique_race_entry_endlap UNIQUE (raceEntryId, endLap)
 );
@@ -91,6 +98,7 @@ CREATE INDEX idx_raceentries_driverid ON RaceEntries(driverId);
 CREATE INDEX idx_raceentries_raceid ON RaceEntries(raceId);
 CREATE INDEX idx_laps_raceentryid ON Laps(raceEntryId);
 CREATE INDEX idx_stints_raceentryid ON Stints(raceEntryId);
+CREATE INDEX idx_results_raceentryid ON RaceResults(raceEntryId);
 
 -- Sample data for Ranks
 INSERT INTO Ranks (name, icon, minPoints, maxPoints) VALUES
@@ -165,31 +173,48 @@ DECLARE
     currentElo INT;
     deltaElo FLOAT;
     newElo INT;
+    startPosition INT;
+    driverId INT;
 BEGIN
-    SELECT AIDifficulty + raceLength INTO difficultyMultiplier
-    FROM Races
-    WHERE id = NEW.raceId;
+    SELECT re.driverId, re.startPosition, r.AIDifficulty + r.raceLength
+    INTO driverId, startPosition, difficultyMultiplier
+    FROM RaceEntries re
+             JOIN Races r ON r.id = re.raceId
+    WHERE re.id = NEW.raceEntryId;
 
-    sfDiff := NEW.startPosition - NEW.finishPosition;
+    -- Calculate start-finish difference
+    sfDiff := startPosition - NEW.finishPosition;
     wghtSfDiff := sfDiff * difficultyMultiplier;
+
+    -- Calculate weighted points
     wghtPoints := (NEW.points + CASE WHEN NEW.hasFastestLap THEN 1 ELSE 0 END) * (difficultyMultiplier / 100.0);
+
+    -- Calculate weighted damage
     wghtDmg := (100 - NEW.averagedamage) * (difficultyMultiplier / 100.0);
-    wghtDnf := (CASE WHEN NEW.hasDnf THEN (20 - NEW.startPosition) * difficultyMultiplier ELSE 0 END);
+
+    -- Calculate weighted DNF penalty
+    wghtDnf := (CASE WHEN NEW.hasDnf THEN (20 - startPosition) * difficultyMultiplier ELSE 0 END);
+
+    -- Calculate weighted penalties
     wghtPen := NEW.penaltiesInSeconds;
 
-    SELECT ELO INTO currentElo FROM Drivers WHERE id = NEW.driverId;
+    -- Fetch current ELO
+    SELECT ELO INTO currentElo FROM Drivers WHERE id = driverId;
 
+    -- Calculate ELO change
     deltaElo := (wghtSfDiff + wghtPoints + wghtDmg - wghtDnf - wghtPen) / (currentElo / 10.0);
     newElo := currentElo + ROUND(deltaElo);
 
-    UPDATE Drivers SET ELO = newElo WHERE id = NEW.driverId;
+    -- Update Driver ELO
+    UPDATE Drivers SET ELO = newElo WHERE id = driverId;
 
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_update_driver_elo
-    AFTER INSERT ON RaceEntries
+    AFTER INSERT OR UPDATE OF finishPosition, hasFastestLap, penaltiesInSeconds, hasDnf, points, averagedamage
+    ON RaceResults
     FOR EACH ROW
 EXECUTE FUNCTION update_driver_elo();
 

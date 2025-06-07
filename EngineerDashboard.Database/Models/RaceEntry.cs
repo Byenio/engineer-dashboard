@@ -13,21 +13,9 @@ public class RaceEntry
 
     public int raceid { get; set; }
 
-    public int? teamid { get; set; }
+    public int teamid { get; set; }
 
     public int startposition { get; set; }
-
-    public int? finishposition { get; set; }
-
-    public bool hasfastestlap { get; set; }
-
-    public int? penaltiesinseconds { get; set; }
-
-    public bool hasdnf { get; set; }
-
-    public int? points { get; set; }
-
-    public int? averagedamage { get; set; }
 
     [ForeignKey("driverid")]
     public virtual Driver driver { get; set; } = null!;
@@ -40,4 +28,5 @@ public class RaceEntry
 
     public virtual ICollection<Lap> laps { get; set; } = new List<Lap>();
     public virtual ICollection<Stint> stints { get; set; } = new List<Stint>();
+    public virtual RaceResult? raceresult { get; set; }
 }
