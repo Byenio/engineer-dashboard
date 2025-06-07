@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="EngineerDashboard.App.Views.DriversRankingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:converters="clr-namespace:EngineerDashboard.App.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="Auto" d:DesignWidth="Auto">
+    <UserControl.Resources>
+        <Style x:Key="NonInteractiveListView" TargetType="{x:Type ui:ListViewItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="0 2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ui:ListViewItem}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <FontFamily x:Key="JetBrainsMonoExtraBold">pack://application,,,/Assets/Fonts/#JetBrains Mono ExtraBold</FontFamily>
+        <FontFamily x:Key="JetBrainsMonoRegular">pack://application,,,/Assets/Fonts/#JetBrains Mono Regular</FontFamily>
+        
+        <Style x:Key="HeaderContent" TargetType="{x:Type ui:TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Margin" Value="12 0" />
+        </Style>
+
+        <Style x:Key="CellContent" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoRegular}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="12 2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        
+        <converters:RankToBrushConverter x:Key="RankToBrushConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header Row -->
+        <Grid Grid.Row="0" Margin="80 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBlock Grid.Column="0" Text="ID" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="1" Text="Name" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="2" Text="Elo" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="3" Text="Rank" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="4" Text="Team" Style="{StaticResource HeaderContent}" />
+        </Grid>
+
+        <ui:ListView Grid.Row="1"
+                     ItemsSource="{Binding Drivers}"
+                     IsSynchronizedWithCurrentItem="True"
+                     BorderThickness="0"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Margin="80 0"
+                     ItemContainerStyle="{StaticResource NonInteractiveListView}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding id}" Style="{StaticResource CellContent}" />
+                        <TextBlock Grid.Column="1" Text="{Binding name}" Style="{StaticResource CellContent}" />
+                        <TextBlock Grid.Column="2" Text="{Binding elo}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="3" Style="{StaticResource CellContent}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="rank.icon" />
+                                    <Binding Path="rank.name" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                            <TextBlock.Foreground>
+                                <Binding Path="rank.name" Converter="{StaticResource RankToBrushConverter}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                        <TextBlock Grid.Column="4" Text="{Binding team.name, TargetNullValue='No Team'}" Style="{StaticResource CellContent}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ui:ListView>
+    </Grid>
+</UserControl>

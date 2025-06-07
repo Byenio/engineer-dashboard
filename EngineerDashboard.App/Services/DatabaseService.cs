@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
@@ -79,6 +80,8 @@ public class DatabaseService : IDisposable
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(OnFinalClassificationDataReceived));
     }
+    
+    #region telemetry handlers
 
     private void OnParticipantsDataReceived(ParticipantsPacket packet)
     {
@@ -330,6 +333,19 @@ public class DatabaseService : IDisposable
             }
         });
     }
+    
+    #endregion
+    
+    #region queries
+
+    public async Task<Collection<Driver>> GetDrivers()
+    {
+        var drivers = await DriverService.GetDrivers(_context);
+
+        return drivers;
+    } 
+    
+    #endregion
     
     public void Dispose()
     {

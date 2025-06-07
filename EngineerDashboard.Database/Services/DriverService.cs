@@ -1,4 +1,5 @@
-﻿using EngineerDashboard.Database.Models;
+﻿using System.Collections.ObjectModel;
+using EngineerDashboard.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EngineerDashboard.Database.Services;
@@ -24,5 +25,16 @@ public class DriverService
         await context.SaveChangesAsync();
         
         return driver;
+    }
+
+    public static async Task<Collection<Driver>> GetDrivers(AppDbContext context)
+    {
+        var drivers = await context.Drivers
+            .Include(d => d.rank)
+            .Include(d => d.team)
+            .Include(d => d.raceentries)
+            .ToListAsync();
+        
+        return new Collection<Driver>(drivers);
     }
 }

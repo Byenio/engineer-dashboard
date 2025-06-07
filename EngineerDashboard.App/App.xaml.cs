@@ -47,6 +47,7 @@ public partial class App : Application
         services.AddSingleton<TelemetryChartViewModel>();
         services.AddSingleton<CarInfoCardViewModel>();
         services.AddSingleton<DamageCardViewModel>();
+        services.AddSingleton<DriversRankingViewModel>();
         
         services.AddSingleton<SessionInfoView>(sp => 
             new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
@@ -94,6 +95,10 @@ public partial class App : Application
 
         services.AddSingleton<DamageCardView>(sp =>
             new DamageCardView { DataContext = sp.GetRequiredService<DamageCardViewModel>() }
+        );
+
+        services.AddSingleton<DriversRankingView>(sp =>
+            new DriversRankingView { DataContext = sp.GetRequiredService<DriversRankingViewModel>() }
         );
         
         services.AddSingleton<MainWindow>();

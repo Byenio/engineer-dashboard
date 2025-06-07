@@ -22,6 +22,17 @@ public static class ColorHelper
         _ => Brushes.Indigo
     };
     
+    public static Brush GetRankBrush(string rankName) => rankName switch
+    {
+        "Bronze" => new SolidColorBrush(Color.FromRgb(205, 127, 50)),
+        "Silver" => new SolidColorBrush(Color.FromRgb(192, 192, 192)),
+        "Gold" => new SolidColorBrush(Color.FromRgb(255, 215, 0)),
+        "Platinum" => new SolidColorBrush(Color.FromRgb(229, 228, 226)),
+        "Master" => new SolidColorBrush(Color.FromRgb(138, 43, 226)),
+        "Champion" => new SolidColorBrush(Color.FromRgb(255, 165, 0)),
+        _ => Brushes.DimGray
+    };
+    
     public static Brush GetTyreBrush(VisualTyreCompound tyreCompound) => tyreCompound switch
     {
         VisualTyreCompound.SOFT => Brushes.Red,

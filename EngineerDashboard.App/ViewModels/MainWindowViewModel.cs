@@ -21,6 +21,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly TelemetryChartView _telemetryChartView;
     private readonly CarInfoCardView _carInfoCardView;
     private readonly DamageCardView _damageCardView;
+    private readonly DriversRankingView _driversRankingView;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -48,7 +49,8 @@ public partial class MainWindowViewModel : ObservableObject
         InputsChartView inputsChartView,
         TelemetryChartView telemetryChartView,
         CarInfoCardView carInfoCardView,
-        DamageCardView damageCardView)
+        DamageCardView damageCardView,
+        DriversRankingView driversRankingView)
     {
         SessionInfoView = sessionInfoView;
 
@@ -62,6 +64,7 @@ public partial class MainWindowViewModel : ObservableObject
         _telemetryChartView = telemetryChartView;
         _carInfoCardView = carInfoCardView;
         _damageCardView = damageCardView;
+        _driversRankingView = driversRankingView;
 
         ShowDriversPage();
     }
@@ -178,6 +181,16 @@ public partial class MainWindowViewModel : ObservableObject
         telemetryGrid.Children.Add(_telemetryChartView);
         
         CurrentPageView = telemetryGrid;
+    }
+    
+    [RelayCommand]
+    private void ShowDatabasePage()
+    {
+        if (_currentPage == Page.Database)
+            return;
+
+        _currentPage = Page.Database;
+        CurrentPageView = _driversRankingView;
     }
 
     private void RemoveFromParent(UIElement element)
