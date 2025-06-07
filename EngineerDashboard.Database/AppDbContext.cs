@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<Track> Tracks { get; set; }
     public DbSet<Race> Races { get; set; }
     public DbSet<RaceEntry> RaceEntries { get; set; }
+    public DbSet<RaceResult> RaceResults { get; set; }
     public DbSet<Lap> Laps { get; set; }
     public DbSet<Stint> Stints { get; set; }
 
@@ -30,6 +31,7 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("ranks");
             entity.HasKey(e => e.id);
+            entity.Property(e => e.id).ValueGeneratedOnAdd();
             entity.Property(e => e.name).IsRequired().HasMaxLength(50);
             entity.Property(e => e.icon).HasMaxLength(255);
             entity.Property(e => e.minpoints).IsRequired();
@@ -41,7 +43,7 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.id);
             entity.Property(e => e.id).ValueGeneratedNever();
             entity.Property(e => e.name).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.elo).IsRequired().HasDefaultValue(null);
+            entity.Property(e => e.elo).IsRequired().HasDefaultValue(1000);
             entity.Property(e => e.rankid).IsRequired().HasDefaultValue(1);
             entity.HasOne(e => e.rank)
                 .WithMany(r => r.drivers)
@@ -69,6 +71,7 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("races");
             entity.HasKey(e => e.id);
+            entity.Property(e => e.id).ValueGeneratedOnAdd();
             entity.Property(e => e.date).IsRequired();
             entity.Property(e => e.aidifficulty).IsRequired();
             entity.Property(e => e.racelength).IsRequired();
@@ -86,8 +89,11 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("raceentries");
             entity.HasKey(e => e.id);
-            entity.Property(e => e.hasfastestlap).HasDefaultValue(false);
-            entity.Property(e => e.hasdnf).HasDefaultValue(false);
+            entity.Property(e => e.id).ValueGeneratedOnAdd();
+            entity.Property(e => e.driverid).IsRequired();
+            entity.Property(e => e.raceid).IsRequired();
+            entity.Property(e => e.teamid).IsRequired();
+            entity.Property(e => e.startposition).IsRequired();
             entity.HasOne(e => e.driver)
                 .WithMany(d => d.raceentries)
                 .HasForeignKey(e => e.driverid)
@@ -108,15 +114,43 @@ public class AppDbContext : DbContext
                 .WithOne(s => s.raceentry)
                 .HasForeignKey(s => s.raceentryid)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.raceresult)
+                .WithOne(r => r.raceentry)
+                .HasForeignKey<RaceResult>(r => r.raceentryid)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => new { e.driverid, e.raceid }).IsUnique();
+        });
+
+        modelBuilder.Entity<RaceResult>(entity =>
+        {
+            entity.ToTable("raceresults");
+            entity.HasKey(e => e.id);
+            entity.Property(e => e.id).ValueGeneratedOnAdd();
+            entity.Property(e => e.raceentryid).IsRequired();
+            entity.Property(e => e.finishposition).IsRequired();
+            entity.Property(e => e.hasfastestlap).HasDefaultValue(false);
+            entity.Property(e => e.penaltiesinseconds).IsRequired();
+            entity.Property(e => e.hasdnf).HasDefaultValue(false);
+            entity.Property(e => e.points).IsRequired();
+            entity.Property(e => e.averagedamage).IsRequired();
+            entity.HasOne(e => e.raceentry)
+                .WithOne(re => re.raceresult)
+                .HasForeignKey<RaceResult>(e => e.raceentryid)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Lap>(entity =>
         {
             entity.ToTable("laps");
             entity.HasKey(e => e.id);
+            entity.Property(e => e.id).ValueGeneratedOnAdd();
+            entity.Property(e => e.raceentryid).IsRequired();
             entity.Property(e => e.lapnum).IsRequired();
             entity.Property(e => e.currentposition).IsRequired();
+            entity.Property(e => e.deltatoleader).IsRequired();
+            entity.Property(e => e.deltatocarinfront).IsRequired();
+            entity.Property(e => e.lastlaptime).IsRequired();
+            entity.Property(e => e.tyrewear).IsRequired();
             entity.HasOne(e => e.raceentry)
                 .WithMany(re => re.laps)
                 .HasForeignKey(e => e.raceentryid)
@@ -128,7 +162,12 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("stints");
             entity.HasKey(e => e.id);
+            entity.Property(e => e.id).ValueGeneratedOnAdd();
+            entity.Property(e => e.raceentryid).IsRequired();
             entity.Property(e => e.endlap).IsRequired();
+            entity.Property(e => e.tyrecompound).IsRequired();
+            entity.Property(e => e.tyrewear).IsRequired();
+            entity.Property(e => e.pitstoptime).IsRequired();
             entity.HasOne(e => e.raceentry)
                 .WithMany(re => re.stints)
                 .HasForeignKey(e => e.raceentryid)
