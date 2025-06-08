@@ -1,4 +1,5 @@
-﻿using System.Reactive.Subjects;
+﻿using System.Net;
+using System.Reactive.Subjects;
 using System.Windows.Threading;
 using EngineerDashboard.Telemetry;
 using EngineerDashboard.Telemetry.Data;
@@ -8,7 +9,7 @@ namespace EngineerDashboard.App.Services;
 
 public class TelemetryProvider : IDisposable
 {
-   private readonly TelemetryClient _telemetryClient = new(20777);
+   private readonly TelemetryClient _telemetryClient = new(int.Parse(Environment.GetEnvironmentVariable("TELEMETRY_CLIENT_PORT")));
 
    private readonly Subject<CarDamagePacket> _carDamageSubject = new();
    private readonly Subject<CarSetupPacket> _carSetupSubject = new();

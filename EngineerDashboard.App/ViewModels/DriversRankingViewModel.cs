@@ -8,7 +8,7 @@ namespace EngineerDashboard.App.ViewModels;
 public class DriversRankingViewModel : ObservableObject, IDisposable
 {
     private readonly DatabaseService _databaseService;
-    private ObservableCollection<Driver> _drivers;
+    private ObservableCollection<Driver> _drivers = new();
 
     public ObservableCollection<Driver> Drivers
     {
@@ -19,15 +19,20 @@ public class DriversRankingViewModel : ObservableObject, IDisposable
     public DriversRankingViewModel(DatabaseService databaseService)
     {
         _databaseService = databaseService;
-        _drivers = new ObservableCollection<Driver>();
 
-        LoadDriversAsync();
+        _ = LoadDriversAsync();
     }
 
-    private async void LoadDriversAsync()
+    public async Task LoadDriversAsync()
     {
         var drivers = await _databaseService.GetDrivers();
-        Drivers = new ObservableCollection<Driver>(drivers);
+        var sortedDrivers = drivers.OrderByDescending(d => d.elo).ToList();
+        
+        Drivers.Clear();
+        foreach (var driver in sortedDrivers)
+        {
+            Drivers.Add(driver);
+        }
     }
 
     public void Dispose()

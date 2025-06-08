@@ -33,6 +33,7 @@ public class DriverService
             .Include(d => d.rank)
             .Include(d => d.team)
             .Include(d => d.raceentries)
+            .AsNoTracking()
             .ToListAsync();
         
         return new Collection<Driver>(drivers);

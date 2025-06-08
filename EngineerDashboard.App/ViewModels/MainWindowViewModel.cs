@@ -22,6 +22,8 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly CarInfoCardView _carInfoCardView;
     private readonly DamageCardView _damageCardView;
     private readonly DriversRankingView _driversRankingView;
+    
+    private readonly DriversRankingViewModel _driversRankingViewModel;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -50,7 +52,8 @@ public partial class MainWindowViewModel : ObservableObject
         TelemetryChartView telemetryChartView,
         CarInfoCardView carInfoCardView,
         DamageCardView damageCardView,
-        DriversRankingView driversRankingView)
+        DriversRankingView driversRankingView,
+        DriversRankingViewModel driversRankingViewModel)
     {
         SessionInfoView = sessionInfoView;
 
@@ -65,6 +68,7 @@ public partial class MainWindowViewModel : ObservableObject
         _carInfoCardView = carInfoCardView;
         _damageCardView = damageCardView;
         _driversRankingView = driversRankingView;
+        _driversRankingViewModel = driversRankingViewModel;
 
         ShowDriversPage();
     }
@@ -184,12 +188,10 @@ public partial class MainWindowViewModel : ObservableObject
     }
     
     [RelayCommand]
-    private void ShowDatabasePage()
+    private async Task ShowDatabasePage()
     {
-        if (_currentPage == Page.Database)
-            return;
-
         _currentPage = Page.Database;
+        await _driversRankingViewModel.LoadDriversAsync();
         CurrentPageView = _driversRankingView;
     }
 

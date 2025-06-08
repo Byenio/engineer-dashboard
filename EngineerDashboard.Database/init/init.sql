@@ -19,7 +19,7 @@ CREATE TABLE Drivers (
                          id INTEGER PRIMARY KEY,
                          name VARCHAR(100) NOT NULL,
                          ELO INTEGER NOT NULL DEFAULT 1000,
-                         rankId INTEGER NOT NULL DEFAULT 1,
+                         rankId INTEGER NOT NULL DEFAULT 2,
                          teamId INTEGER,
                          FOREIGN KEY (rankId) REFERENCES Ranks(id) ON DELETE RESTRICT,
                          FOREIGN KEY (teamId) REFERENCES Teams(id) ON DELETE SET NULL
