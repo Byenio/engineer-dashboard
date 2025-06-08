@@ -22,6 +22,22 @@ public static class ColorHelper
         _ => Brushes.Indigo
     };
     
+    public static Brush GetTeamBrush(string team) => team switch
+    {
+        "MERCEDES" => Brushes.Aqua,
+        "FERRARI" => Brushes.Red,
+        "RED BULL" => Brushes.RoyalBlue,
+        "WILLIAMS" => Brushes.DodgerBlue,
+        "ASTON MARTIN" => Brushes.ForestGreen,
+        "ALPINE" => Brushes.DeepSkyBlue,
+        "ALPHATAURI" => Brushes.SteelBlue,
+        "HAAS" => Brushes.LightGray,
+        "MCLAREN" => Brushes.DarkOrange,
+        "ALFA ROMEO" => Brushes.DarkRed,
+        "F1WORLD" => Brushes.Goldenrod,
+        _ => Brushes.Indigo
+    };
+    
     public static Brush GetRankBrush(string rankName) => rankName switch
     {
         "Bronze" => new SolidColorBrush(Color.FromRgb(205, 127, 50)),

@@ -40,6 +40,7 @@
         </Style>
         
         <converters:RankToBrushConverter x:Key="RankToBrushConverter" />
+        <converters:TeamToBrushConverter x:Key="TeamToBrushConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -94,7 +95,11 @@
                                 <Binding Path="rank.name" Converter="{StaticResource RankToBrushConverter}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <TextBlock Grid.Column="4" Text="{Binding team.name, TargetNullValue='No Team'}" Style="{StaticResource CellContent}" />
+                        <TextBlock Grid.Column="4" Text="{Binding team.name, TargetNullValue='No Team'}" Style="{StaticResource CellContent}" >
+                            <TextBlock.Foreground>
+                                <Binding Path="team.name" Converter="{StaticResource TeamToBrushConverter}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
