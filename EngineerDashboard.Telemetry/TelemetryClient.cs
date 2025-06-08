@@ -87,7 +87,7 @@ public class TelemetryClient
     public TelemetryClient(int port, Packet[] enabledPackets = null)
     {
         _client = new UdpClient(port);
-        _peerEndPoint = new IPEndPoint(IPAddress.Any, port);
+        _peerEndPoint = new IPEndPoint(IPAddress.Broadcast, port);
 
         _timeoutTimer = new Timer(TIMEOUT)
         {
