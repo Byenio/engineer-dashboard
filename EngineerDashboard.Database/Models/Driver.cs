@@ -15,7 +15,7 @@ public class Driver
     [Required]
     public int? elo { get; set; } = 1000;
 
-    public int rankid { get; set; } = 1;
+    public int rankid { get; set; } = 2;
 
     public int? teamid { get; set; }
 
