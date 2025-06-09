@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
+        <ApplicationIcon>Assets\Icons\app-icon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -116,6 +117,10 @@
       </Resource>
       <None Remove="Assets\Icons\inputs-icon.png" />
       <Resource Include="Assets\Icons\inputs-icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Assets\Icons\app-icon.ico" />
+      <Resource Include="Assets\Icons\app-icon.ico">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
     </ItemGroup>

@@ -146,6 +146,11 @@ public partial class InputsChartViewModel : ObservableObject, IDisposable
             telemetryProvider.LapDataStream
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(OnLapDataReceived));
+        
+        _telemetrySubscription.Add(
+            telemetryProvider.EventStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(OnEventReceived));
     }
 
     private void OnLapDataReceived(LapDataPacket packet)
@@ -191,6 +196,17 @@ public partial class InputsChartViewModel : ObservableObject, IDisposable
         
         ThrottleApplicationCurrentLap.Add(new ObservablePoint(LapDistance, Math.Round(data.throttle * 100, 0)));
         BrakeApplicationCurrentLap.Add(new ObservablePoint(LapDistance, Math.Round(data.brake * 100, 0)));
+    }
+
+    private void OnEventReceived(EventPacket packet)
+    {
+        if (packet.eventStringCode.ToString() == "SSTA")
+        {
+            ThrottleApplicationBestLap.Clear();
+            ThrottleApplicationCurrentLap.Clear();
+            BrakeApplicationBestLap.Clear();
+            BrakeApplicationCurrentLap.Clear();
+        }
     }
 
     partial void OnThrottleApplicationBestLapChanged(ObservableCollection<ObservablePoint> oldValue,
