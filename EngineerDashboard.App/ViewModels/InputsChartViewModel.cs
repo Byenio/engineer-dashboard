@@ -200,12 +200,15 @@ public partial class InputsChartViewModel : ObservableObject, IDisposable
 
     private void OnEventReceived(EventPacket packet)
     {
-        if (packet.eventStringCode.ToString() == "SSTA")
+        var stringCode = new string(packet.eventStringCode).TrimEnd('\0');
+        
+        if (stringCode == "SSTA")
         {
             ThrottleApplicationBestLap.Clear();
             ThrottleApplicationCurrentLap.Clear();
             BrakeApplicationBestLap.Clear();
             BrakeApplicationCurrentLap.Clear();
+            BestLapTime = 0;
         }
     }
 
