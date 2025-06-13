@@ -4,6 +4,7 @@ using EngineerDashboard.App.Services;
 using EngineerDashboard.App.ViewModels;
 using EngineerDashboard.App.Views;
 using EngineerDashboard.Database;
+using EngineerDashboard.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -48,6 +49,9 @@ public partial class App : Application
         services.AddSingleton<CarInfoCardViewModel>();
         services.AddSingleton<DamageCardViewModel>();
         services.AddSingleton<DriversRankingViewModel>();
+        services.AddSingleton<DriverInfoViewModel>();
+
+        services.AddSingleton<Driver>();
         
         services.AddSingleton<SessionInfoView>(sp => 
             new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
@@ -99,6 +103,10 @@ public partial class App : Application
 
         services.AddSingleton<DriversRankingView>(sp =>
             new DriversRankingView { DataContext = sp.GetRequiredService<DriversRankingViewModel>() }
+        );
+
+        services.AddSingleton<DriverInfoView>(sp =>
+            new DriverInfoView { DataContext = sp.GetRequiredService<DriverInfoViewModel>() }
         );
         
         services.AddSingleton<MainWindow>();

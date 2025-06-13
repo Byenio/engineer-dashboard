@@ -1,4 +1,5 @@
-﻿using EngineerDashboard.Database.Models;
+﻿using System.Collections.ObjectModel;
+using EngineerDashboard.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EngineerDashboard.Database.Services;
@@ -20,5 +21,18 @@ public class RaceEntryService
         await context.SaveChangesAsync();
 
         return raceEntry;
+    }
+
+    public static async Task<List<RaceEntry>> GetRaceEntriesByDriverAsync(AppDbContext context, int driverId)
+    {
+        if (!await context.Drivers.AnyAsync(d => d.id == driverId))
+            throw new InvalidOperationException("Driver not found");
+
+        return await context.RaceEntries
+            .Where(entry => entry.driverid == driverId)
+            .Include(entry => entry.race)
+            .Include(entry => entry.raceresult)
+            .Include(entry => entry.race.track)
+            .ToListAsync();
     }
 }

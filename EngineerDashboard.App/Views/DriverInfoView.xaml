@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="EngineerDashboard.App.Views.DriverInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:EngineerDashboard.App.Views"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <FontFamily x:Key="JetBrainsMonoExtraBold">pack://application,,,/Assets/Fonts/#JetBrains Mono ExtraBold</FontFamily>
+        <FontFamily x:Key="JetBrainsMonoRegular">pack://application,,,/Assets/Fonts/#JetBrains Mono Regular</FontFamily>
+        
+        <Style x:Key="HeaderContent" TargetType="{x:Type ui:TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Margin" Value="12 10" />
+        </Style>
+        
+        <Style x:Key="ButtonContent" TargetType="{x:Type ui:TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoExtraBold}" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <Style x:Key="CellContent" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoRegular}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="12 5" />
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="20 20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="20*" />
+        </Grid.ColumnDefinitions>
+        
+        <ui:Button Grid.Row="0" Grid.Column="0" Margin="12 10" Command="{Binding GoBackCommand}">
+            <ui:TextBlock Text="&lt;-" Style="{StaticResource ButtonContent}" />
+        </ui:Button>
+        
+        <ui:TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DriverName, StringFormat='Stats for {0}'}" Style="{StaticResource HeaderContent}" />
+        
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock Text="{Binding DriverId, StringFormat='ID: {0}'}" Style="{StaticResource CellContent}" />
+            <TextBlock Text="{Binding Elo, StringFormat='Elo: {0}'}" Style="{StaticResource CellContent}" />
+            <TextBlock Text="{Binding RankName, StringFormat='Rank: {0}'}" Style="{StaticResource CellContent}" />
+            <TextBlock Text="{Binding TeamName, StringFormat='Team: {0}', TargetNullValue='No Team'}" Style="{StaticResource CellContent}" />
+        </StackPanel>
+        
+        <Grid Grid.Row="0" Grid.Column="2" Margin="80 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="110" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBlock Grid.Column="0" Text="Date" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="1" Text="Track" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="2" Text="Pts" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="3" Text="Started" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="4" Text="Finished" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+        </Grid>
+        
+        <ui:ListView Grid.Row="1" Grid.Column="2"
+                     ItemsSource="{Binding Races}"
+                     IsSynchronizedWithCurrentItem="True"
+                     BorderThickness="0"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Margin="80 0">
+            <!-- <i:Interaction.Triggers> -->
+            <!--     <i:EventTrigger EventName="MouseDoubleClick"> -->
+            <!--         <i:InvokeCommandAction  -->
+            <!--             Command="{Binding DriverDoubleClickCommand}" -->
+            <!--             CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ListView}}" /> -->
+            <!--     </i:EventTrigger> -->
+            <!-- </i:Interaction.Triggers> -->
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition Width="160" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="110" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding race.date}" Style="{StaticResource CellContent}" />
+                        <TextBlock Grid.Column="1" Text="{Binding race.track.name}" Style="{StaticResource CellContent}" />
+                        <TextBlock Grid.Column="2" Text="{Binding raceresult.points, StringFormat='{}{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="3" Text="{Binding startposition, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="4" Text="{Binding raceresult.finishposition, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ui:ListView>
+    </Grid>
+</UserControl>

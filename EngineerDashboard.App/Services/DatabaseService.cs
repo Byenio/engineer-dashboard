@@ -343,7 +343,14 @@ public class DatabaseService : IDisposable
         var drivers = await DriverService.GetDrivers(_context);
 
         return drivers;
-    } 
+    }
+
+    public async Task<List<RaceEntry>> GetRacesByDriver(int driverId)
+    {
+        var races = await RaceEntryService.GetRaceEntriesByDriverAsync(_context, driverId);
+        
+        return races;
+    }
     
     #endregion
     
