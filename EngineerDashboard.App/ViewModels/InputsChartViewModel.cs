@@ -209,6 +209,7 @@ public partial class InputsChartViewModel : ObservableObject, IDisposable
             BrakeApplicationBestLap.Clear();
             BrakeApplicationCurrentLap.Clear();
             BestLapTime = 0;
+            LapNum = 0;
         }
     }
 

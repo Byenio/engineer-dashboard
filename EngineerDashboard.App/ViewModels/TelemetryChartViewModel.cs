@@ -217,6 +217,11 @@ public partial class TelemetryChartViewModel : ObservableObject, IDisposable
             telemetryProvider.LapDataStream
                 .ObserveOn(SynchronizationContext.Current)
                 .Subscribe(OnLapDataReceived));
+        
+        _telemetrySubscription.Add(
+            telemetryProvider.EventStream
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(OnEventReceived));
     }
 
     private void OnLapDataReceived(LapDataPacket packet)
@@ -270,6 +275,23 @@ public partial class TelemetryChartViewModel : ObservableObject, IDisposable
         SpeedCurrentLap.Add(new ObservablePoint(LapDistance, data.speed));
         DrsCurrentLap.Add(new ObservablePoint(LapDistance, data.drs));
         GearCurrentLap.Add(new ObservablePoint(LapDistance, data.gear));
+    }
+
+    private void OnEventReceived(EventPacket packet)
+    {
+        var stringCode = new string(packet.eventStringCode).TrimEnd('\0');
+        
+        if (stringCode == "SSTA")
+        {
+            SpeedBestLap.Clear();
+            SpeedCurrentLap.Clear();
+            DrsBestLap.Clear();
+            DrsCurrentLap.Clear();
+            GearBestLap.Clear();
+            GearCurrentLap.Clear();
+            BestLapTime = 0;
+            LapNum = 0;
+        }
     }
 
     partial void OnSpeedBestLapChanged(ObservableCollection<ObservablePoint> oldValue,
