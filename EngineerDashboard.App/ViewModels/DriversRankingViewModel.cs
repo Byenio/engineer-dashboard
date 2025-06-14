@@ -1,14 +1,18 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.Database.Models;
 
 namespace EngineerDashboard.App.ViewModels;
 
-public class DriversRankingViewModel : ObservableObject, IDisposable
+public partial class DriversRankingViewModel : ObservableObject, IDisposable
 {
     private readonly DatabaseService _databaseService;
     private ObservableCollection<Driver> _drivers = new();
+    public event Action<Driver> DriverSelected;
 
     public ObservableCollection<Driver> Drivers
     {
@@ -21,6 +25,13 @@ public class DriversRankingViewModel : ObservableObject, IDisposable
         _databaseService = databaseService;
 
         _ = LoadDriversAsync();
+    }
+    
+    [RelayCommand]
+    private void DriverDoubleClick(Driver driver)
+    {
+        if (driver != null)
+            DriverSelected?.Invoke(driver);
     }
 
     public async Task LoadDriversAsync()

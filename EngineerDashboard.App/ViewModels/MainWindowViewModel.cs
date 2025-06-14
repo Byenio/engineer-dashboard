@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EngineerDashboard.App.Services;
 using EngineerDashboard.App.Views;
+using EngineerDashboard.Database.Models;
 
 namespace EngineerDashboard.App.ViewModels;
 
@@ -22,8 +23,11 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly CarInfoCardView _carInfoCardView;
     private readonly DamageCardView _damageCardView;
     private readonly DriversRankingView _driversRankingView;
+    private readonly DriverInfoView _driverInfoView;
     
     private readonly DriversRankingViewModel _driversRankingViewModel;
+
+    private readonly DatabaseService _databaseService;
 
     [ObservableProperty] private object _currentPageView;
 
@@ -34,7 +38,8 @@ public partial class MainWindowViewModel : ObservableObject
         CarSetup,
         Charts,
         InputsAndTelemetry,
-        Database
+        Ranking,
+        DriverInfo
     }
 
     private Page _currentPage = Page.None;
@@ -53,7 +58,9 @@ public partial class MainWindowViewModel : ObservableObject
         CarInfoCardView carInfoCardView,
         DamageCardView damageCardView,
         DriversRankingView driversRankingView,
-        DriversRankingViewModel driversRankingViewModel)
+        DriverInfoView driverInfoView,
+        DriversRankingViewModel driversRankingViewModel,
+        DatabaseService databaseService)
     {
         SessionInfoView = sessionInfoView;
 
@@ -68,7 +75,13 @@ public partial class MainWindowViewModel : ObservableObject
         _carInfoCardView = carInfoCardView;
         _damageCardView = damageCardView;
         _driversRankingView = driversRankingView;
+        _driverInfoView = driverInfoView;
+        
         _driversRankingViewModel = driversRankingViewModel;
+        
+        _databaseService = databaseService;
+
+        _driversRankingViewModel.DriverSelected += ShowDriverInfoPage;
 
         ShowDriversPage();
     }
@@ -188,13 +201,33 @@ public partial class MainWindowViewModel : ObservableObject
     }
     
     [RelayCommand]
-    private async Task ShowDatabasePage()
+    private async Task ShowRankingPage()
     {
-        _currentPage = Page.Database;
+        _currentPage = Page.Ranking;
         await _driversRankingViewModel.LoadDriversAsync();
         CurrentPageView = _driversRankingView;
     }
 
+    private void ShowDriverInfoPage(Driver driver)
+    {
+        if (driver == null) return;
+
+        _currentPage = Page.DriverInfo;
+        var driverInfoViewModel = new DriverInfoViewModel(_databaseService, driver);
+    
+        _driverInfoView.DataContext = driverInfoViewModel;
+
+        driverInfoViewModel.GoBackRequested += async () =>
+        {
+            _currentPage = Page.Ranking;
+            _driversRankingView.DataContext = _driversRankingViewModel;
+            await _driversRankingViewModel.LoadDriversAsync();
+            CurrentPageView = _driversRankingView;
+        };
+
+        CurrentPageView = _driverInfoView;
+    }
+    
     private void RemoveFromParent(UIElement element)
     {
         if (element == null)
