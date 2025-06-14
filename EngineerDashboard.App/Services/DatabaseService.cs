@@ -97,7 +97,7 @@ public class DatabaseService : IDisposable
             {
                 id = id,
                 name = name,
-                teamid = teamid,
+                team_id = teamid,
             };
 
             _drivers.Add(newDriver);
@@ -132,10 +132,10 @@ public class DatabaseService : IDisposable
 
         _race = new Race
         {
-            trackid = (int)packet.trackId,
+            track_id = (int)packet.trackId,
             date = DateTime.UtcNow,
-            aidifficulty = packet.aiDifficulty,
-            racelength = packet.totalLaps,
+            ai_difficulty = packet.aiDifficulty,
+            length = packet.totalLaps,
         };
 
         _hasRaceInfo = true;
@@ -174,13 +174,14 @@ public class DatabaseService : IDisposable
 
             var lap = new Lap
             {
-                raceentryid = _raceEntries[i].id,
-                lapnum = lapData.currentLapNum - 1,
-                currentposition = lapData.carPosition,
-                deltatoleader = lapData.deltaToRaceLeaderInMS,
-                deltatocarinfront = lapData.deltaToCarInFrontInMS,
-                lastlaptime = (int)lapData.lastLapTimeInMS,
-                tyrewear = (int)_latestTyreWear[i],
+                race_entry_id = _raceEntries[i].id,
+                lap_number = lapData.currentLapNum,
+                tyre_wear = (int)_latestTyreWear[i],
+                tyre_compound_id = _latestVisualTyreCompound[i],
+                current_position = lapData.carPosition,
+                delta_leader = lapData.deltaToRaceLeaderInMS,
+                delta_front = lapData.deltaToCarInFrontInMS,
+                last_lap_time = (int)lapData.lastLapTimeInMS,
             };
 
             Task.Run(async () =>
@@ -218,20 +219,18 @@ public class DatabaseService : IDisposable
                 continue;
             }
 
-            var stint = new Stint
+            var pitStop = new PitStop
             {
-                raceentryid = _raceEntries[i].id,
-                endlap = _lastLoggedLapNums[i],
-                tyrecompound = _latestVisualTyreCompound[i],
-                tyrewear = (int)_latestTyreWear[i],
-                pitstoptime = _latestPitStopTime[i]
+                race_entry_id = _raceEntries[i].id,
+                lap_number = _lastLoggedLapNums[i],
+                pit_stop_time = _latestPitStopTime[i]
             };
 
             _lastPitLimiterStatus[i] = currentPitLimiterStatus;
 
             Task.Run(async () =>
             {
-                await StintService.CreateStintAsync(_context, stint);
+                await PitStopService.CreatePitStopAsync(_context, pitStop);
             });
         }
     }
@@ -262,13 +261,14 @@ public class DatabaseService : IDisposable
 
                 var raceResult = new RaceResult
                 {
-                    raceentryid = _raceEntries[i].id,
-                    finishposition = data.position,
-                    hasfastestlap = _currentFastestLapId == i,
-                    penaltiesinseconds = data.penaltiesTime,
-                    hasdnf = data.resultStatus != ResultStatus.FINISHED,
+                    race_entry_id = _raceEntries[i].id,
+                    start_position = data.gridPosition,
+                    finish_position = data.position,
+                    has_fastest_lap = _currentFastestLapId == i,
                     points = data.points,
-                    averagedamage = (int)_latestAverageDamage[i]
+                    penalties = data.penaltiesTime,
+                    damage = (int)_latestAverageDamage[i],
+                    dnf = data.resultStatus != ResultStatus.FINISHED
                 };
 
                 raceResults.Add(raceResult);
@@ -322,10 +322,8 @@ public class DatabaseService : IDisposable
             {
                 var raceEntry = new RaceEntry
                 {
-                    driverid = _drivers[i].id,
-                    raceid = _raceId.Value,
-                    teamid = (int)_drivers[i].teamid,
-                    startposition = _startPositions[i]
+                    driver_id = _drivers[i].id,
+                    race_id = _raceId.Value,
                 };
 
                 _raceEntries.Add(raceEntry);

@@ -7,7 +7,7 @@ public class RaceResultService
 {
     public static async Task<RaceResult> CreateRaceResultAsync(AppDbContext context, RaceResult raceResult)
     {
-        if (!await context.RaceEntries.AnyAsync(re => re.id == raceResult.raceentryid))
+        if (!await context.RaceEntries.AnyAsync(re => re.id == raceResult.race_entry_id))
             throw new InvalidOperationException("Race entry not found");
         
         context.RaceResults.Add(raceResult);
@@ -20,7 +20,7 @@ public class RaceResultService
     {
         foreach (var raceResult in raceResults)
         {
-            if (!await context.RaceEntries.AnyAsync(re => re.id == raceResult.raceentryid))
+            if (!await context.RaceEntries.AnyAsync(re => re.id == raceResult.race_entry_id))
                 throw new InvalidOperationException($"Race entry not found");
         }
 

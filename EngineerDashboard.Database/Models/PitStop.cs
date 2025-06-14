@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EngineerDashboard.Database.Models;
 
-public class RaceResult
+public class PitStop
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,18 +12,11 @@ public class RaceResult
     [Column("race_entry_id")]
     public int race_entry_id { get; set; }
     
-    [Column("start_position")]
-    public int start_position { get; set; }
+    [Column("lap_number")]
+    public int lap_number { get; set; }
     
-    [Column("finish_position")]
-    public int finish_position { get; set; }
-    
-    [Column("has_fastest_lap")]
-    public bool has_fastest_lap { get; set; }
-    public int points { get; set; }
-    public int penalties { get; set; }
-    public int damage { get; set; }
-    public bool dnf { get; set; }
+    [Column("pit_stop_time")]
+    public int? pit_stop_time { get; set; }
     
     [ForeignKey("race_entry_id")]
     public virtual RaceEntry race_entry { get; set; } = null!;

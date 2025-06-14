@@ -12,8 +12,9 @@ public class AppDbContext : DbContext
     public DbSet<Race> Races { get; set; }
     public DbSet<RaceEntry> RaceEntries { get; set; }
     public DbSet<RaceResult> RaceResults { get; set; }
+    public DbSet<TyreCompound> TyreCompounds { get; set; }
     public DbSet<Lap> Laps { get; set; }
-    public DbSet<Stint> Stints { get; set; }
+    public DbSet<PitStop> PitStops { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -34,7 +35,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.id).ValueGeneratedOnAdd();
             entity.Property(e => e.name).IsRequired().HasMaxLength(50);
             entity.Property(e => e.icon).HasMaxLength(255);
-            entity.Property(e => e.minpoints).IsRequired();
+            entity.Property(e => e.min_points).IsRequired();
         });
 
         modelBuilder.Entity<Driver>(entity =>
@@ -44,18 +45,18 @@ public class AppDbContext : DbContext
             entity.Property(e => e.id).ValueGeneratedNever();
             entity.Property(e => e.name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.elo).IsRequired().HasDefaultValue(1000);
-            entity.Property(e => e.rankid).IsRequired().HasDefaultValue(1);
+            entity.Property(e => e.rank_id).IsRequired().HasDefaultValue(1);
             entity.HasOne(e => e.rank)
                 .WithMany(r => r.drivers)
-                .HasForeignKey(e => e.rankid)
+                .HasForeignKey(e => e.rank_id)
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(e => e.team)
                 .WithMany(t => t.drivers)
-                .HasForeignKey(e => e.teamid)
+                .HasForeignKey(e => e.team_id)
                 .OnDelete(DeleteBehavior.SetNull);
-            entity.HasMany(e => e.raceentries)
+            entity.HasMany(e => e.race_entries)
                 .WithOne(re => re.driver)
-                .HasForeignKey(re => re.driverid)
+                .HasForeignKey(re => re.driver_id)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -73,69 +74,64 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.id);
             entity.Property(e => e.id).ValueGeneratedOnAdd();
             entity.Property(e => e.date).IsRequired();
-            entity.Property(e => e.aidifficulty).IsRequired();
-            entity.Property(e => e.racelength).IsRequired();
+            entity.Property(e => e.ai_difficulty).IsRequired();
+            entity.Property(e => e.length).IsRequired();
             entity.HasOne(e => e.track)
                 .WithMany(t => t.races)
-                .HasForeignKey(e => e.trackid)
+                .HasForeignKey(e => e.track_id)
                 .OnDelete(DeleteBehavior.Restrict);
-            entity.HasMany(e => e.raceentries)
+            entity.HasMany(e => e.race_entries)
                 .WithOne(re => re.race)
-                .HasForeignKey(re => re.raceid)
+                .HasForeignKey(re => re.race_id)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<RaceEntry>(entity =>
         {
-            entity.ToTable("raceentries");
+            entity.ToTable("race_entries");
             entity.HasKey(e => e.id);
             entity.Property(e => e.id).ValueGeneratedOnAdd();
-            entity.Property(e => e.driverid).IsRequired();
-            entity.Property(e => e.raceid).IsRequired();
-            entity.Property(e => e.teamid).IsRequired();
-            entity.Property(e => e.startposition).IsRequired();
+            entity.Property(e => e.driver_id).IsRequired();
+            entity.Property(e => e.race_id).IsRequired();
             entity.HasOne(e => e.driver)
-                .WithMany(d => d.raceentries)
-                .HasForeignKey(e => e.driverid)
+                .WithMany(d => d.race_entries)
+                .HasForeignKey(e => e.driver_id)
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.race)
-                .WithMany(r => r.raceentries)
-                .HasForeignKey(e => e.raceid)
+                .WithMany(r => r.race_entries)
+                .HasForeignKey(e => e.race_id)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(e => e.team)
-                .WithMany(t => t.raceentries)
-                .HasForeignKey(e => e.teamid)
-                .OnDelete(DeleteBehavior.SetNull);
             entity.HasMany(e => e.laps)
-                .WithOne(l => l.raceentry)
-                .HasForeignKey(l => l.raceentryid)
+                .WithOne(l => l.race_entry)
+                .HasForeignKey(l => l.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasMany(e => e.stints)
-                .WithOne(s => s.raceentry)
-                .HasForeignKey(s => s.raceentryid)
+            entity.HasMany(e => e.pit_stops)
+                .WithOne(s => s.race_entry)
+                .HasForeignKey(s => s.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(e => e.raceresult)
-                .WithOne(r => r.raceentry)
-                .HasForeignKey<RaceResult>(r => r.raceentryid)
+            entity.HasOne(e => e.race_result)
+                .WithOne(r => r.race_entry)
+                .HasForeignKey<RaceResult>(r => r.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasIndex(e => new { e.driverid, e.raceid }).IsUnique();
+            entity.HasIndex(e => new { e.driver_id, e.race_id }).IsUnique();
         });
 
         modelBuilder.Entity<RaceResult>(entity =>
         {
-            entity.ToTable("raceresults");
+            entity.ToTable("race_results");
             entity.HasKey(e => e.id);
             entity.Property(e => e.id).ValueGeneratedOnAdd();
-            entity.Property(e => e.raceentryid).IsRequired();
-            entity.Property(e => e.finishposition).IsRequired();
-            entity.Property(e => e.hasfastestlap).HasDefaultValue(false);
-            entity.Property(e => e.penaltiesinseconds).IsRequired();
-            entity.Property(e => e.hasdnf).HasDefaultValue(false);
+            entity.Property(e => e.race_entry_id).IsRequired();
+            entity.Property(e => e.start_position).IsRequired();
+            entity.Property(e => e.finish_position).IsRequired();
+            entity.Property(e => e.has_fastest_lap).HasDefaultValue(false);
+            entity.Property(e => e.penalties).IsRequired();
+            entity.Property(e => e.dnf).HasDefaultValue(false);
             entity.Property(e => e.points).IsRequired();
-            entity.Property(e => e.averagedamage).IsRequired();
-            entity.HasOne(e => e.raceentry)
-                .WithOne(re => re.raceresult)
-                .HasForeignKey<RaceResult>(e => e.raceentryid)
+            entity.Property(e => e.damage).IsRequired();
+            entity.HasOne(e => e.race_entry)
+                .WithOne(re => re.race_result)
+                .HasForeignKey<RaceResult>(e => e.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -144,35 +140,38 @@ public class AppDbContext : DbContext
             entity.ToTable("laps");
             entity.HasKey(e => e.id);
             entity.Property(e => e.id).ValueGeneratedOnAdd();
-            entity.Property(e => e.raceentryid).IsRequired();
-            entity.Property(e => e.lapnum).IsRequired();
-            entity.Property(e => e.currentposition).IsRequired();
-            entity.Property(e => e.deltatoleader).IsRequired();
-            entity.Property(e => e.deltatocarinfront).IsRequired();
-            entity.Property(e => e.lastlaptime).IsRequired();
-            entity.Property(e => e.tyrewear).IsRequired();
-            entity.HasOne(e => e.raceentry)
+            entity.Property(e => e.race_entry_id).IsRequired();
+            entity.Property(e => e.lap_number).IsRequired();
+            entity.Property(e => e.current_position).IsRequired();
+            entity.Property(e => e.delta_leader).IsRequired();
+            entity.Property(e => e.delta_front).IsRequired();
+            entity.Property(e => e.last_lap_time).IsRequired();
+            entity.Property(e => e.tyre_wear).IsRequired();
+            entity.Property(e => e.tyre_compound_id).IsRequired();
+            entity.HasOne(e => e.race_entry)
                 .WithMany(re => re.laps)
-                .HasForeignKey(e => e.raceentryid)
+                .HasForeignKey(e => e.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasIndex(e => new { e.raceentryid, e.lapnum }).IsUnique();
+            entity.HasOne(e => e.tyre_compound)
+                .WithMany(re => re.laps)
+                .HasForeignKey(e => e.tyre_compound_id)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(e => new { e.race_entry_id, e.lap_number }).IsUnique();
         });
 
-        modelBuilder.Entity<Stint>(entity =>
+        modelBuilder.Entity<PitStop>(entity =>
         {
-            entity.ToTable("stints");
+            entity.ToTable("pit_stops");
             entity.HasKey(e => e.id);
             entity.Property(e => e.id).ValueGeneratedOnAdd();
-            entity.Property(e => e.raceentryid).IsRequired();
-            entity.Property(e => e.endlap).IsRequired();
-            entity.Property(e => e.tyrecompound).IsRequired();
-            entity.Property(e => e.tyrewear).IsRequired();
-            entity.Property(e => e.pitstoptime).IsRequired();
-            entity.HasOne(e => e.raceentry)
-                .WithMany(re => re.stints)
-                .HasForeignKey(e => e.raceentryid)
+            entity.Property(e => e.race_entry_id).IsRequired();
+            entity.Property(e => e.lap_number).IsRequired();
+            entity.Property(e => e.pit_stop_time).IsRequired();
+            entity.HasOne(e => e.race_entry)
+                .WithMany(re => re.pit_stops)
+                .HasForeignKey(e => e.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasIndex(e => new { e.raceentryid, e.endlap }).IsUnique();
+            entity.HasIndex(e => new { e.race_entry_id, e.lap_number }).IsUnique();
         });
     }
 }

@@ -2,14 +2,14 @@
 
 namespace EngineerDashboard.Database.Models;
 
-public class Team
+public class TyreCompound
 {
     [Key]
     public int id { get; set; }
 
     [Required]
-    [MaxLength(100)]
+    [MaxLength(10)]
     public string name { get; set; } = null!;
-
-    public virtual ICollection<Driver> drivers { get; set; } = new List<Driver>();
+    
+    public virtual ICollection<Lap> laps { get; set; } = new List<Lap>();
 }

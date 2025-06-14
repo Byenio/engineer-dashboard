@@ -8,7 +8,7 @@ public static class RaceService
 {
     public static async Task<Race> CreateRaceAsync(AppDbContext context, Race race)
     {
-        if (!await context.Tracks.AnyAsync(t => t.id == race.trackid))
+        if (!await context.Tracks.AnyAsync(t => t.id == race.track_id))
             throw new InvalidOperationException($"Track not found.");
         
         context.Races.Add(race);
