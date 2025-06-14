@@ -7,7 +7,7 @@ public class LapService
 {
     public static async Task<Lap> CreateLapAsync(AppDbContext context, Lap lap)
     {
-        if (!await context.RaceEntries.AnyAsync(re => re.id == lap.raceentryid))
+        if (!await context.RaceEntries.AnyAsync(re => re.id == lap.race_entry_id))
             throw new InvalidOperationException("Race entry not found");
 
         context.Laps.Add(lap);

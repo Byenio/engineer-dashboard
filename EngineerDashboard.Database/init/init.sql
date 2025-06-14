@@ -1,244 +1,230 @@
--- Teams table: Stores team information with manual IDs from C# enum
-CREATE TABLE Teams (
-                       id INTEGER PRIMARY KEY,
-                       name VARCHAR(100) NOT NULL
+CREATE TABLE teams (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
 );
 
--- Ranks table: Stores rank information with ELO ranges and icon
-CREATE TABLE Ranks (
-                       id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                       name VARCHAR(50) NOT NULL,
-                       icon VARCHAR(255),
-                       minPoints INTEGER NOT NULL,
-                       maxPoints INTEGER,
-                       CONSTRAINT check_points CHECK (minPoints <= maxPoints OR maxPoints IS NULL)
+CREATE TABLE ranks (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(50) NOT NULL,
+    icon VARCHAR(255),
+    min_points INTEGER NOT NULL,
+    max_points INTEGER,
+    CONSTRAINT check_points CHECK (min_points <= max_points OR max_points IS NULL)
 );
 
--- Drivers table: Stores driver information with manual IDs from game telemetry
-CREATE TABLE Drivers (
-                         id INTEGER PRIMARY KEY,
-                         name VARCHAR(100) NOT NULL,
-                         ELO INTEGER NOT NULL DEFAULT 1000,
-                         rankId INTEGER NOT NULL DEFAULT 2,
-                         teamId INTEGER,
-                         FOREIGN KEY (rankId) REFERENCES Ranks(id) ON DELETE RESTRICT,
-                         FOREIGN KEY (teamId) REFERENCES Teams(id) ON DELETE SET NULL
+CREATE TABLE drivers (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    elo INTEGER NOT NULL DEFAULT 1000,
+    rank_id INTEGER NOT NULL DEFAULT 2,
+    team_id INTEGER,
+    FOREIGN KEY (rank_id) REFERENCES ranks(id) ON DELETE RESTRICT,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE SET NULL
 );
 
--- Tracks table: Stores track information with manual IDs from game telemetry
-CREATE TABLE Tracks (
-                        id INTEGER PRIMARY KEY,
-                        name VARCHAR(100) NOT NULL
+CREATE TABLE tracks (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
 );
 
--- Races table: Stores race information
-CREATE TABLE Races (
-                       id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                       date TIMESTAMP NOT NULL,
-                       trackId INTEGER NOT NULL,
-                       AIDifficulty INTEGER NOT NULL CHECK (AIDifficulty >= 0 AND AIDifficulty <= 110),
-                       raceLength INTEGER NOT NULL CHECK (raceLength > 0),
-                       FOREIGN KEY (trackId) REFERENCES Tracks(id) ON DELETE RESTRICT
+CREATE TABLE races (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    date TIMESTAMP NOT NULL,
+    track_id INTEGER NOT NULL,
+    ai_difficulty INTEGER NOT NULL CHECK (ai_difficulty >= 0 AND ai_difficulty <= 110),
+    length INTEGER NOT NULL CHECK (length > 0),
+    FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE RESTRICT
 );
 
--- RaceEntries table: Junction table for driver-race participation
-CREATE TABLE RaceEntries (
-                             id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                             driverId INTEGER NOT NULL,
-                             raceId INTEGER NOT NULL,
-                             teamId INTEGER NOT NULL,
-                             startPosition INTEGER NOT NULL CHECK (startPosition > 0),
-                             FOREIGN KEY (driverId) REFERENCES Drivers(id) ON DELETE CASCADE,
-                             FOREIGN KEY (raceId) REFERENCES Races(id) ON DELETE CASCADE,
-                             FOREIGN KEY (teamId) REFERENCES Teams(id) ON DELETE SET NULL,
-                             CONSTRAINT unique_driver_race UNIQUE (driverId, raceId)
+CREATE TABLE race_entries (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    driver_id INTEGER NOT NULL,
+    race_id INTEGER NOT NULL,
+    FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE CASCADE,
+    FOREIGN KEY (race_id) REFERENCES races(id) ON DELETE CASCADE,
+    CONSTRAINT unique_driver_race UNIQUE (driver_id, race_id)
 );
 
--- RaceResults: Stores results of a race for a driver's race entry
-CREATE TABLE RaceResults (
-                            id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                            raceEntryId INTEGER NOT NULL,
-                            finishPosition INTEGER NOT NULL CHECK (finishPosition > 0),
-                            hasFastestLap BOOLEAN DEFAULT FALSE,
-                            penaltiesInSeconds INTEGER NOT NULL,
-                            hasDnf BOOLEAN DEFAULT FALSE,
-                            points INTEGER NOT NULL,
-                            averagedamage INTEGER NOT NULL CHECK (averagedamage BETWEEN 0 AND 100),
-                            FOREIGN KEY (raceEntryId) REFERENCES RaceEntries(id) ON DELETE CASCADE
+CREATE TABLE race_results (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    race_entry_id INTEGER NOT NULL,
+    start_position INTEGER NOT NULL CHECK (start_position > 0),
+    finish_position INTEGER NOT NULL CHECK (finish_position > 0),
+    has_fastest_lap BOOLEAN DEFAULT FALSE,
+    points INTEGER NOT NULL,
+    penalties INTEGER NOT NULL,
+    damage INTEGER NOT NULL CHECK (damage BETWEEN 0 AND 100),
+    dnf BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (race_entry_id) REFERENCES race_entries(id) ON DELETE CASCADE
 );
 
--- Laps table: Stores lap data for a driver's race entry
-CREATE TABLE Laps (
-                      id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                      raceEntryId INTEGER NOT NULL,
-                      lapNum INTEGER NOT NULL CHECK (lapNum > 0),
-                      currentPosition INTEGER NOT NULL CHECK (currentPosition > 0),
-                      deltaToLeader INTEGER NOT NULL,
-                      deltaToCarInFront INTEGER NOT NULL,
-                      lastLapTime INTEGER NOT NULL,
-                      tyreWear INTEGER NOT NULL CHECK (tyreWear >= 0 AND tyreWear <= 100),
-                      FOREIGN KEY (raceEntryId) REFERENCES RaceEntries(id) ON DELETE CASCADE,
-                      CONSTRAINT unique_race_entry_lap UNIQUE (raceEntryId, lapNum)
+CREATE TABLE tyre_compounds (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(10) NOT NULL
 );
 
--- Stints table: Stores pit stop data (tyre info before pit stop)
-CREATE TABLE Stints (
-                        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                        raceEntryId INTEGER NOT NULL,
-                        endLap INTEGER NOT NULL CHECK (endLap > 0),
-                        tyreCompound INTEGER NOT NULL,
-                        tyreWear INTEGER NOT NULL CHECK (tyreWear >= 0 AND tyreWear <= 100),
-                        pitStopTime INTEGER NOT NULL,
-                        FOREIGN KEY (raceEntryId) REFERENCES RaceEntries(id) ON DELETE CASCADE,
-                        CONSTRAINT unique_race_entry_endlap UNIQUE (raceEntryId, endLap)
+CREATE TABLE laps (
+    id               INTEGER GENERATED ALWAYS AS IDENTITY,
+    race_entry_id    INTEGER NOT NULL,
+    lap_number       INTEGER NOT NULL CHECK (lap_number > 0),
+    tyre_wear        INTEGER NOT NULL CHECK (tyre_wear >= 0 AND tyre_wear <= 100),
+    tyre_compound_id INTEGER NOT NULL,
+    current_position INTEGER NOT NULL CHECK (current_position > 0),
+    delta_leader     INTEGER NOT NULL CHECK (delta_leader >= 0),
+    delta_front      INTEGER NOT NULL CHECK (delta_front >= 0),
+    last_lap_time    INTEGER NOT NULL,
+    CONSTRAINT unique_race_entry_lap UNIQUE (race_entry_id, lap_number),
+    FOREIGN KEY (race_entry_id) REFERENCES race_entries (id),
+    FOREIGN KEY (tyre_compound_id) REFERENCES tyre_compounds (id) ON DELETE CASCADE
 );
 
--- Indexes for performance
-CREATE INDEX idx_raceentries_driverid ON RaceEntries(driverId);
-CREATE INDEX idx_raceentries_raceid ON RaceEntries(raceId);
-CREATE INDEX idx_laps_raceentryid ON Laps(raceEntryId);
-CREATE INDEX idx_stints_raceentryid ON Stints(raceEntryId);
-CREATE INDEX idx_results_raceentryid ON RaceResults(raceEntryId);
+CREATE TABLE pit_stops (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    race_entry_id INTEGER NOT NULL,
+    lap_number INTEGER NOT NULL CHECK (lap_number > 0),
+    pit_stop_time INTEGER NOT NULL,
+    FOREIGN KEY (race_entry_id) REFERENCES race_entries(id) ON DELETE CASCADE,
+    CONSTRAINT unique_race_entry_stop UNIQUE (race_entry_id, lap_number)
+);
 
--- Sample data for Ranks
-INSERT INTO Ranks (name, icon, minPoints, maxPoints) VALUES
-                                                         ('Bronze', '🥉', 0, 899),
-                                                         ('Silver', '🥈', 900, 1099),
-                                                         ('Gold', '🥇', 1100, 1399),
-                                                         ('Platinum', '💎', 1400, 1799),
-                                                         ('Master', '🧙‍♂️', 1800, 2499),
-                                                         ('Champion', '🏆', 2500, NULL);
+CREATE INDEX idx_raceentries_driverid ON race_entries(driver_id);
+CREATE INDEX idx_raceentries_raceid ON race_entries(race_id);
+CREATE INDEX idx_laps_raceentryid ON laps(race_entry_id);
+CREATE INDEX idx_pitstops_raceentryid ON pit_stops(race_entry_id);
+CREATE INDEX idx_results_raceentryid ON race_results(race_entry_id);
 
--- Sample data for Tracks (with manual IDs)
-INSERT INTO Tracks (id, name) VALUES
-                                  (0, 'Melbourne'),
-                                  (1, 'Paul Ricard'),
-                                  (2, 'Shanghai'),
-                                  (3, 'Sakhir (Bahrain)'),
-                                  (4, 'Catalunya'),
-                                  (5, 'Monaco'),
-                                  (6, 'Montreal'),
-                                  (7, 'Silverstone'),
-                                  (8, 'Hockenheim'),
-                                  (9, 'Hungaroring'),
-                                  (10, 'Spa'),
-                                  (11, 'Monza'),
-                                  (12, 'Singapore'),
-                                  (13, 'Suzuka'),
-                                  (14, 'Abu Dhabi'),
-                                  (15, 'Texas'),
-                                  (16, 'Brazil'),
-                                  (17, 'Austria'),
-                                  (18, 'Sochi'),
-                                  (19, 'Mexico'),
-                                  (20, 'Baku (Azerbajian)'),
-                                  (21, 'Sakhir Short'),
-                                  (22, 'Silverstone Short'),
-                                  (23, 'Texas Short'),
-                                  (24, 'Suzuka Short'),
-                                  (25, 'Hanoi'),
-                                  (26, 'Zandvoort'),
-                                  (27, 'Imola'),
-                                  (28, 'Portimao'),
-                                  (29, 'Jeddah'),
-                                  (30, 'Miami'),
-                                  (31, 'Las Vegas'),
-                                  (32, 'Losali');
+INSERT INTO ranks (name, icon, min_points, max_points) VALUES
+    ('Bronze', '🥉', 0, 899),
+    ('Silver', '🥈', 900, 1099),
+    ('Gold', '🥇', 1100, 1399),
+    ('Platinum', '💎', 1400, 1799),
+    ('Master', '🧙‍♂️', 1800, 2499),
+    ('Champion', '🏆', 2500, NULL);
 
--- Sample data for Teams (matching C# enum)
-INSERT INTO Teams (id, name) VALUES
-                                 (0, 'Mercedes'),
-                                 (1, 'Ferrari'),
-                                 (2, 'Red Bull'),
-                                 (3, 'Williams'),
-                                 (4, 'Aston Martin'),
-                                 (5, 'Alpine'),
-                                 (6, 'AlphaTauri'),
-                                 (7, 'Haas'),
-                                 (8, 'McLaren'),
-                                 (9, 'Alfa Romeo'),
-                                 (104, 'F1 World');
+INSERT INTO tracks (id, name) VALUES
+    (0, 'Melbourne'),
+    (1, 'Paul Ricard'),
+    (2, 'Shanghai'),
+    (3, 'Bahrain'),
+    (4, 'Catalunya'),
+    (5, 'Monaco'),
+    (6, 'Montreal'),
+    (7, 'Silverstone'),
+    (8, 'Hockenheim'),
+    (9, 'Hungaroring'),
+    (10, 'Spa'),
+    (11, 'Monza'),
+    (12, 'Singapore'),
+    (13, 'Suzuka'),
+    (14, 'Abu Dhabi'),
+    (15, 'Texas'),
+    (16, 'Brazil'),
+    (17, 'Austria'),
+    (18, 'Sochi'),
+    (19, 'Mexico'),
+    (20, 'Azerbajian'),
+    (21, 'Sakhir Short'),
+    (22, 'Silverstone Short'),
+    (23, 'Texas Short'),
+    (24, 'Suzuka Short'),
+    (25, 'Hanoi'),
+    (26, 'Zandvoort'),
+    (27, 'Imola'),
+    (28, 'Portimao'),
+    (29, 'Jeddah'),
+    (30, 'Miami'),
+    (31, 'Las Vegas'),
+    (32, 'Losali');
 
--- Trigger for ELO calculation
+INSERT INTO teams (id, name) VALUES
+    (0, 'Mercedes'),
+    (1, 'Ferrari'),
+    (2, 'Red Bull'),
+    (3, 'Williams'),
+    (4, 'Aston Martin'),
+    (5, 'Alpine'),
+    (6, 'AlphaTauri'),
+    (7, 'Haas'),
+    (8, 'McLaren'),
+    (9, 'Alfa Romeo'),
+    (104, 'F1 World');
+
+INSERT INTO tyre_compounds(id, name) VALUES
+    (16, 'SOFT'),
+    (17, 'MEDIUM'),
+    (18, 'HARD'),
+    (7, 'INTER'),
+    (8, 'WET');
+
 CREATE OR REPLACE FUNCTION update_driver_elo()
     RETURNS TRIGGER AS $$
 DECLARE
-    difficultyMultiplier INT;
-    sfDiff INT;
-    wghtSfDiff FLOAT;
-    wghtPoints FLOAT;
-    wghtDmg FLOAT;
-    wghtDnf FLOAT;
-    wghtPen FLOAT;
-    currentElo INT;
-    deltaElo FLOAT;
-    newElo INT;
-    startPosition INT;
-    driverId INT;
+    difficulty_multiplier INT;
+    start_finish_difference INT;
+    weighted_start_finish_difference FLOAT;
+    weighted_points FLOAT;
+    weighted_dmg FLOAT;
+    weighted_dnf FLOAT;
+    weighted_pen FLOAT;
+    current_elo INT;
+    delta_elo FLOAT;
+    new_elo INT;
+    driver_id INT;
 BEGIN
-    SELECT re.driverId, re.startPosition, r.AIDifficulty + r.raceLength
-    INTO driverId, startPosition, difficultyMultiplier
-    FROM RaceEntries re
-             JOIN Races r ON r.id = re.raceId
-    WHERE re.id = NEW.raceEntryId;
+    SELECT re.driver_id, r.ai_difficulty + r.length
+    INTO driver_id, difficulty_multiplier
+    FROM race_entries re
+             JOIN races r ON r.id = re.race_id
+    WHERE re.id = NEW.race_entry_id;
 
-    -- Calculate start-finish difference
-    sfDiff := startPosition - NEW.finishPosition;
-    wghtSfDiff := sfDiff * difficultyMultiplier;
+    start_finish_difference := NEW.start_position - NEW.finish_position;
+    weighted_start_finish_difference := start_finish_difference * difficulty_multiplier;
 
-    -- Calculate weighted points
-    wghtPoints := (NEW.points + CASE WHEN NEW.hasFastestLap THEN 1 ELSE 0 END) * (difficultyMultiplier / 100.0);
+    weighted_points := (NEW.points + CASE WHEN NEW.has_fastest_lap THEN 1 ELSE 0 END) * (difficulty_multiplier / 100.0);
 
-    -- Calculate weighted damage
-    wghtDmg := (100 - NEW.averagedamage) * (difficultyMultiplier / 100.0);
+    weighted_dmg := (100 - NEW.damage) * (difficulty_multiplier / 100.0);
 
-    -- Calculate weighted DNF penalty
-    wghtDnf := (CASE WHEN NEW.hasDnf THEN (20 - startPosition) * difficultyMultiplier ELSE 0 END);
+    weighted_dnf := (CASE WHEN NEW.dnf THEN (20 - NEW.start_position) * difficulty_multiplier ELSE 0 END);
 
-    -- Calculate weighted penalties
-    wghtPen := NEW.penaltiesInSeconds;
+    weighted_pen := NEW.penalties;
 
-    -- Fetch current ELO
-    SELECT ELO INTO currentElo FROM Drivers WHERE id = driverId;
+    SELECT elo INTO current_elo FROM drivers WHERE id = driver_id;
+    
+    delta_elo := (weighted_start_finish_difference + weighted_points + weighted_dmg - weighted_dnf - weighted_pen) / GREATEST(current_elo / 10.0, 1.0);
+    new_elo := current_elo + ROUND(delta_elo);
 
-    -- Calculate ELO change
-    deltaElo := (wghtSfDiff + wghtPoints + wghtDmg - wghtDnf - wghtPen) / (currentElo / 10.0);
-    newElo := currentElo + ROUND(deltaElo);
-
-    -- Update Driver ELO
-    UPDATE Drivers SET ELO = newElo WHERE id = driverId;
+    UPDATE drivers SET elo = new_elo WHERE id = driver_id;
 
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_update_driver_elo
-    AFTER INSERT OR UPDATE OF finishPosition, hasFastestLap, penaltiesInSeconds, hasDnf, points, averagedamage
-    ON RaceResults
+CREATE OR REPLACE TRIGGER trg_update_driver_elo
+    AFTER INSERT OR UPDATE OF start_position, finish_position, has_fastest_lap, points, penalties, damage, dnf
+    ON race_results
     FOR EACH ROW
 EXECUTE FUNCTION update_driver_elo();
 
--- Trigger for updating driver rank based on ELO
 CREATE OR REPLACE FUNCTION update_driver_rank()
     RETURNS TRIGGER AS $$
 DECLARE
-    newRankId INT;
+    new_rank_id INT;
 BEGIN
-    SELECT id INTO newRankId
-    FROM Ranks
-    WHERE minPoints <= NEW.ELO AND (maxPoints >= NEW.ELO OR maxPoints IS NULL)
+    SELECT id INTO new_rank_id
+    FROM ranks
+    WHERE min_points <= NEW.elo AND (max_points >= NEW.elo OR max_points IS NULL)
     LIMIT 1;
 
-    UPDATE Drivers
-    SET rankId = newRankId
+    UPDATE drivers
+    SET rank_id = new_rank_id
     WHERE id = NEW.id;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_update_rank_after_elo_update
-    AFTER UPDATE OF ELO ON Drivers
+CREATE OR REPLACE TRIGGER trg_update_rank_after_elo_update
+    AFTER UPDATE OF elo ON drivers
     FOR EACH ROW
-    WHEN (OLD.ELO IS DISTINCT FROM NEW.ELO)
+    WHEN (OLD.elo IS DISTINCT FROM NEW.elo)
 EXECUTE FUNCTION update_driver_rank();

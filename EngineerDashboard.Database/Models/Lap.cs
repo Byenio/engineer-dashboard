@@ -8,21 +8,34 @@ public class Lap
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int id { get; set; }
+    
+    [Column("race_entry_id")]
+    public int race_entry_id { get; set; }
+    
+    [Column("lap_number")]
+    public int lap_number { get; set; }
+    
+    [Column("tyre_wear")]
+    public int? tyre_wear { get; set; }
+    
+    [Column("tyre_compound_id")]
+    public int tyre_compound_id { get; set; }
+    
+    [Column("current_position")]
+    public int current_position { get; set; }
+    
+    [Column("delta_leader")]
+    public int? delta_leader { get; set; }
+    
+    [Column("delta_front")]
+    public int? delta_front { get; set; }
+    
+    [Column("last_lap_time")]
+    public int? last_lap_time { get; set; }
 
-    public int raceentryid { get; set; }
-
-    public int lapnum { get; set; }
-
-    public int currentposition { get; set; }
-
-    public int? deltatoleader { get; set; }
-
-    public int? deltatocarinfront { get; set; }
-
-    public int? lastlaptime { get; set; }
-
-    public int? tyrewear { get; set; }
-
-    [ForeignKey("raceentryid")]
-    public virtual RaceEntry raceentry { get; set; } = null!;
+    [ForeignKey("race_entry_id")]
+    public virtual RaceEntry race_entry { get; set; } = null!;
+    
+    [ForeignKey("tyre_compound_id")]
+    public virtual TyreCompound tyre_compound { get; set; } = null!;
 }

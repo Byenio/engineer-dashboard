@@ -15,10 +15,10 @@ public class DriverService
                 return result;
         }
 
-        if (!await context.Ranks.AnyAsync(r => r.id == driver.rankid))
+        if (!await context.Ranks.AnyAsync(r => r.id == driver.rank_id))
             throw new InvalidOperationException("Rank not found.");
         
-        if (driver.teamid != null && !await context.Teams.AnyAsync(t => t.id == driver.teamid))
+        if (driver.team_id != null && !await context.Teams.AnyAsync(t => t.id == driver.team_id))
             throw new InvalidOperationException("Team not found.");
         
         context.Drivers.Add(driver);
@@ -32,7 +32,7 @@ public class DriverService
         var drivers = await context.Drivers
             .Include(d => d.rank)
             .Include(d => d.team)
-            .Include(d => d.raceentries)
+            .Include(d => d.race_entries)
             .AsNoTracking()
             .ToListAsync();
         

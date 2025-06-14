@@ -8,14 +8,11 @@ public class RaceEntryService
 {
     public static async Task<RaceEntry> CreateRaceEntryAsync(AppDbContext context, RaceEntry raceEntry)
     {
-        if (!await context.Drivers.AnyAsync(d => d.id == raceEntry.driverid))
+        if (!await context.Drivers.AnyAsync(d => d.id == raceEntry.driver_id))
             throw new InvalidOperationException("Driver not found");
         
-        if (!await context.Races.AnyAsync(r => r.id == raceEntry.raceid))
+        if (!await context.Races.AnyAsync(r => r.id == raceEntry.race_id))
             throw new InvalidOperationException("Race not found");
-        
-        if (!await context.Teams.AnyAsync(t => t.id == raceEntry.teamid))
-            throw new InvalidOperationException("Team not found");
 
         context.RaceEntries.Add(raceEntry);
         await context.SaveChangesAsync();
@@ -29,9 +26,9 @@ public class RaceEntryService
             throw new InvalidOperationException("Driver not found");
 
         return await context.RaceEntries
-            .Where(entry => entry.driverid == driverId)
+            .Where(entry => entry.driver_id == driverId)
             .Include(entry => entry.race)
-            .Include(entry => entry.raceresult)
+            .Include(entry => entry.race_result)
             .Include(entry => entry.race.track)
             .ToListAsync();
     }

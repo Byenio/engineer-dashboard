@@ -93,9 +93,9 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding race.date}" Style="{StaticResource CellContent}" />
                         <TextBlock Grid.Column="1" Text="{Binding race.track.name}" Style="{StaticResource CellContent}" />
-                        <TextBlock Grid.Column="2" Text="{Binding raceresult.points, StringFormat='{}{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="3" Text="{Binding startposition, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="4" Text="{Binding raceresult.finishposition, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="2" Text="{Binding race_result.points, StringFormat='{}{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="3" Text="{Binding race_result.start_position, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="4" Text="{Binding race_result.finish_position, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
