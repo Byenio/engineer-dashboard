@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Media;
@@ -30,7 +31,7 @@ public partial class CarInfoCardViewModel : ObservableObject, IDisposable
     [ObservableProperty] private byte _ersStoreEnergy;
     [ObservableProperty] private byte _pitLimiterStatus;
     [ObservableProperty] private ZoneFlag _vehicleFiaFlag;
-    [ObservableProperty] private ObservableCollection<TyreSetData> _tyreSets;
+    [ObservableProperty] private ObservableCollection<TyreSetDataViewModel> _tyreSets;
     [ObservableProperty] private byte _fittedTyreIdx;
     
     public ISeries[] ThrottleSeries { get; set; }
@@ -70,7 +71,7 @@ public partial class CarInfoCardViewModel : ObservableObject, IDisposable
         ErsStoreEnergy = 0;
         PitLimiterStatus = 0;
         VehicleFiaFlag = ZoneFlag.NONE;
-        TyreSets = new ObservableCollection<TyreSetData>();
+        TyreSets = new ObservableCollection<TyreSetDataViewModel>();
         FittedTyreIdx = 0;
         
         ThrottleSeries = new ISeries[]
@@ -232,7 +233,7 @@ public partial class CarInfoCardViewModel : ObservableObject, IDisposable
             
             foreach (var tyre in tyres)
             {
-                TyreSets.Add(tyre);
+                TyreSets.Add(new TyreSetDataViewModel(tyre));
             }
         }
     }

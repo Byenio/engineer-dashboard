@@ -1,6 +1,6 @@
 ﻿namespace EngineerDashboard.App.Helpers;
 
-public static class Formatter
+public static class     Formatter
 {
     public static string FormatMsToLapTimeString(uint ms)
     {
@@ -34,5 +34,22 @@ public static class Formatter
             ts.Milliseconds);
         
         return formatted;
+    }
+    
+    public static string FormatMsToDeltaString(short ms)
+    {
+        TimeSpan ts = TimeSpan.FromMilliseconds(ms);
+
+        if (ms < 0)
+        {
+            ts *= -1;
+            return string.Format("-{0}.{1:D3}",
+                (int)ts.TotalSeconds,
+                ts.Milliseconds);
+        }
+
+        return string.Format("+{0}.{1:D3}",
+            (int)ts.TotalSeconds,
+            ts.Milliseconds);
     }
 }

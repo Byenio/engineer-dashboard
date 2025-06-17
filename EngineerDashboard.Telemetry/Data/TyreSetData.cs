@@ -15,7 +15,7 @@ public struct TyreSetData
     /// <summary>
     /// Visual tyre compound used
     /// </summary>
-    public VisualTyreCompound visualTyreCompund;
+    public VisualTyreCompound visualTyreCompound;
     /// <summary>
     /// Tyre wear (percentage)
     /// </summary>
@@ -39,7 +39,7 @@ public struct TyreSetData
     /// <summary>
     /// Lap delta time in milliseconds compared to fitted set
     /// </summary>
-    public byte lapDeltaTime;
+    public short lapDeltaTime;
     /// <summary>
     /// Whether the set is fitted or not
     /// </summary>
