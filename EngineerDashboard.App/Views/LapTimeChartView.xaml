@@ -9,7 +9,6 @@
     <Grid>
         <lvc:CartesianChart
             Series="{Binding Series}"
-            Title="{Binding Title}"
             XAxes="{Binding XAxes}"
             YAxes="{Binding YAxes}" />
     </Grid>
