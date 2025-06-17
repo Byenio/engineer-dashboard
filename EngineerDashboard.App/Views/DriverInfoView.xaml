@@ -6,6 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:EngineerDashboard.App.Views"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:converters="clr-namespace:EngineerDashboard.App.Converters"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -28,47 +29,83 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Margin" Value="12 5" />
         </Style>
+        
+        <converters:RankToBrushConverter x:Key="RankToBrushConverter" />
+        <converters:TeamToBrushConverter x:Key="TeamToBrushConverter" />
+        <converters:PositionToBrushConverter x:Key="PositionToBrushConverter" />
     </UserControl.Resources>
-    <Grid Margin="20 20">
+    <Grid Margin="20 40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="5*" />
-            <ColumnDefinition Width="20*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="16*" />
         </Grid.ColumnDefinitions>
         
         <ui:Button Grid.Row="0" Grid.Column="0" Margin="12 10" Command="{Binding GoBackCommand}">
             <ui:TextBlock Text="&lt;-" Style="{StaticResource ButtonContent}" />
         </ui:Button>
         
-        <ui:TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DriverName, StringFormat='Stats for {0}'}" Style="{StaticResource HeaderContent}" />
+        <ui:TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding DriverName, StringFormat='Stats for {0}'}" Style="{StaticResource HeaderContent}" />
         
         <StackPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock Text="{Binding DriverId, StringFormat='ID: {0}'}" Style="{StaticResource CellContent}" />
-            <TextBlock Text="{Binding Elo, StringFormat='Elo: {0}'}" Style="{StaticResource CellContent}" />
-            <TextBlock Text="{Binding RankName, StringFormat='Rank: {0}'}" Style="{StaticResource CellContent}" />
-            <TextBlock Text="{Binding TeamName, StringFormat='Team: {0}', TargetNullValue='No Team'}" Style="{StaticResource CellContent}" />
+            <TextBlock Text="ELO:" Style="{StaticResource CellContent}" />
+            <TextBlock Text="Rank:" Style="{StaticResource CellContent}" />
+            <TextBlock Text="Team:" Style="{StaticResource CellContent}" />
+            <GridSplitter Margin="0 20" />
+            <TextBlock Text="Races:" Style="{StaticResource CellContent}" />
+            <TextBlock Text="Wins:" Style="{StaticResource CellContent}" />
+            <TextBlock Text="Podiums:" Style="{StaticResource CellContent}" />
+            <TextBlock Text="Top 10:" Style="{StaticResource CellContent}" />
+            <TextBlock Text="Points:" Style="{StaticResource CellContent}" />
         </StackPanel>
         
-        <Grid Grid.Row="0" Grid.Column="2" Margin="80 10">
+        <StackPanel Grid.Row="1" Grid.Column="2">
+            <TextBlock Text="{Binding Elo}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+            <TextBlock Style="{StaticResource CellContent}" TextAlignment="Right">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} {1}">
+                        <Binding Path="Rank.icon" />
+                        <Binding Path="Rank.name" />
+                    </MultiBinding>
+                </TextBlock.Text>
+                <TextBlock.Foreground>
+                    <Binding Path="Rank.name" Converter="{StaticResource RankToBrushConverter}" />
+                </TextBlock.Foreground>
+            </TextBlock>
+            <TextBlock Text="{Binding TeamName, TargetNullValue='No Team'}" Style="{StaticResource CellContent}" TextAlignment="Right" >
+                <TextBlock.Foreground>
+                    <Binding Path="TeamName" Converter="{StaticResource TeamToBrushConverter}" />
+                </TextBlock.Foreground>
+            </TextBlock>
+            <GridSplitter Margin="0 20" />
+            <TextBlock Text="{Binding CareerRaces}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+            <TextBlock Text="{Binding CareerWins}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+            <TextBlock Text="{Binding CareerPodiums}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+            <TextBlock Text="{Binding CareerTop10s}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+            <TextBlock Text="{Binding CareerPoints}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+        </StackPanel>
+        
+        <Grid Grid.Row="0" Grid.Column="3" Margin="80 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250" />
                 <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="110" />
-                <ColumnDefinition Width="110" />
             </Grid.ColumnDefinitions>
             <ui:TextBlock Grid.Column="0" Text="Date" Style="{StaticResource HeaderContent}" />
             <ui:TextBlock Grid.Column="1" Text="Track" Style="{StaticResource HeaderContent}" />
-            <ui:TextBlock Grid.Column="2" Text="Pts" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
-            <ui:TextBlock Grid.Column="3" Text="Started" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
-            <ui:TextBlock Grid.Column="4" Text="Finished" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="2" Text="Started" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="3" Text="Finished" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="4" Text="Pts" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
         </Grid>
         
-        <ui:ListView Grid.Row="1" Grid.Column="2"
+        <ui:ListView Grid.Row="1" Grid.Column="3"
                      ItemsSource="{Binding Races}"
                      IsSynchronizedWithCurrentItem="True"
                      BorderThickness="0"
@@ -87,15 +124,19 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="250" />
                             <ColumnDefinition Width="160" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="110" />
                             <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="110" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding race.date}" Style="{StaticResource CellContent}" />
                         <TextBlock Grid.Column="1" Text="{Binding race.track.name}" Style="{StaticResource CellContent}" />
-                        <TextBlock Grid.Column="2" Text="{Binding race_result.points, StringFormat='{}{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="3" Text="{Binding race_result.start_position, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="4" Text="{Binding race_result.finish_position, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="2" Text="{Binding race_result.start_position, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="3" Text="{Binding race_result.finish_position, StringFormat='P{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right">
+                            <TextBlock.Foreground>
+                                <Binding Path="race_result.finish_position" Converter="{StaticResource PositionToBrushConverter}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                        <TextBlock Grid.Column="4" Text="{Binding race_result.points, StringFormat='{}{0}'}" Style="{StaticResource CellContent}" TextAlignment="Right" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

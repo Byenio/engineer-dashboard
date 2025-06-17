@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EngineerDashboard.App.Services;
@@ -13,8 +14,13 @@ public partial class DriverInfoViewModel: ObservableObject
     [ObservableProperty] private string _driverName;
     [ObservableProperty] private int _driverId;
     [ObservableProperty] private int _elo;
-    [ObservableProperty] private string _rankName;
+    [ObservableProperty] private Rank _rank;
     [ObservableProperty] private string _teamName;
+    [ObservableProperty] private int _careerRaces;
+    [ObservableProperty] private int _careerWins;
+    [ObservableProperty] private int _careerPodiums;
+    [ObservableProperty] private int _careerTop10s;
+    [ObservableProperty] private int _careerPoints;
 
     private ObservableCollection<RaceEntry> _races = new();
 
@@ -33,10 +39,10 @@ public partial class DriverInfoViewModel: ObservableObject
         _driverId = driver.id;
         _driverName = driver.name;
         _elo = (int)driver.elo;
-        _rankName = driver.rank?.name ?? "No rank";
+        _rank = driver.rank;
         _teamName = driver.team?.name ?? "No Team";
 
-        _ = LoadDriverRaces();
+        _ = LoadDriverStats();
     }
 
     [RelayCommand]
@@ -45,9 +51,15 @@ public partial class DriverInfoViewModel: ObservableObject
         GoBackRequested.Invoke();
     }
     
-    private async Task LoadDriverRaces()
+    private async Task LoadDriverStats()
     {
-        var races = await _databaseService.GetRacesByDriver(_driverId);
+        CareerRaces = await _databaseService.GetDriverRacesCount(DriverId);
+        CareerWins = await _databaseService.GetDriverWinsCount(DriverId);
+        CareerPodiums = await _databaseService.GetDriverTopFinishesCount(DriverId, 3);
+        CareerTop10s = await _databaseService.GetDriverTopFinishesCount(DriverId, 10);
+        CareerPoints = await _databaseService.GetDriverPointsCount(DriverId);
+        
+        var races = await _databaseService.GetRacesByDriver(DriverId);
 
         Races.Clear();
 

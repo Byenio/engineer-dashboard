@@ -8,7 +8,7 @@ using EngineerDashboard.Database.Models;
 
 namespace EngineerDashboard.App.ViewModels;
 
-public partial class DriversRankingViewModel : ObservableObject, IDisposable
+public partial class DriversRankingViewModel : ObservableObject
 {
     private readonly DatabaseService _databaseService;
     private ObservableCollection<Driver> _drivers = new();
@@ -44,10 +44,5 @@ public partial class DriversRankingViewModel : ObservableObject, IDisposable
         {
             Drivers.Add(driver);
         }
-    }
-
-    public void Dispose()
-    {
-        _databaseService.Dispose();
     }
 }

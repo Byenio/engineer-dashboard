@@ -342,6 +342,34 @@ public class DatabaseService : IDisposable
 
         return drivers;
     }
+    
+    public async Task<int> GetDriverRacesCount(int driverId)
+    {
+        var wins = await RaceEntryService.GetDriverRaceEntriesCount(_context, driverId);
+
+        return wins;
+    }
+
+    public async Task<int> GetDriverWinsCount(int driverId)
+    {
+        var wins = await RaceResultService.GetDriverWinsCount(_context, driverId);
+
+        return wins;
+    }
+    
+    public async Task<int> GetDriverTopFinishesCount(int driverId, int position)
+    {
+        var finishes = await RaceResultService.GetDriverTopFinishesCount(_context, driverId, position);
+
+        return finishes;
+    }
+
+    public async Task<int> GetDriverPointsCount(int driverId)
+    {
+        var points = await RaceResultService.GetDriverPointsCount(_context, driverId);
+
+        return points;
+    }
 
     public async Task<List<RaceEntry>> GetRacesByDriver(int driverId)
     {
