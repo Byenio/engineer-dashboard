@@ -49,6 +49,14 @@ public static class ColorHelper
         _ => Brushes.DimGray
     };
     
+    public static Brush GetPositionBrush(int position) => position switch
+    {
+        3 => new SolidColorBrush(Color.FromRgb(205, 127, 50)),
+        2 => new SolidColorBrush(Color.FromRgb(192, 192, 192)),
+        1 => new SolidColorBrush(Color.FromRgb(255, 215, 0)),
+        _ => Brushes.White
+    };
+    
     public static Brush GetTyreBrush(VisualTyreCompound tyreCompound) => tyreCompound switch
     {
         VisualTyreCompound.SOFT => Brushes.Red,
@@ -56,6 +64,16 @@ public static class ColorHelper
         VisualTyreCompound.HARD => Brushes.White,
         VisualTyreCompound.INTER => Brushes.MediumSeaGreen,
         VisualTyreCompound.WET => Brushes.RoyalBlue,
+        _ => Brushes.Black
+    };
+    
+    public static Brush GetTyreBrush(string name) => name switch
+    {
+        "SOFT" => Brushes.Red,
+        "MEDIUM" => Brushes.Gold,
+        "HARD" => Brushes.White,
+        "INTER" => Brushes.MediumSeaGreen,
+        "WET" => Brushes.RoyalBlue,
         _ => Brushes.Black
     };
     

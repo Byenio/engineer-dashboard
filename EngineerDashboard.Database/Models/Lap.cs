@@ -16,7 +16,7 @@ public class Lap
     public int lap_number { get; set; }
     
     [Column("tyre_wear")]
-    public int? tyre_wear { get; set; }
+    public int tyre_wear { get; set; }
     
     [Column("tyre_compound_id")]
     public int tyre_compound_id { get; set; }

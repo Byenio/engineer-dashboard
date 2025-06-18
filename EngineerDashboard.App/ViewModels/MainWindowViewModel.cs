@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -24,8 +25,11 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly DamageCardView _damageCardView;
     private readonly DriversRankingView _driversRankingView;
     private readonly DriverInfoView _driverInfoView;
+    private readonly RaceLapsView _raceLapsView;
     
     private readonly DriversRankingViewModel _driversRankingViewModel;
+    private readonly DriverInfoViewModel _driverInfoViewModel;
+    private readonly RaceLapsViewModel _raceLapsViewModel;
 
     private readonly DatabaseService _databaseService;
 
@@ -39,13 +43,13 @@ public partial class MainWindowViewModel : ObservableObject
         Charts,
         InputsAndTelemetry,
         Ranking,
-        DriverInfo
+        DriverInfo,
+        Laps
     }
 
     private Page _currentPage = Page.None;
 
     public MainWindowViewModel(
-        TelemetryProvider telemetryProvider,
         SessionInfoView sessionInfoView,
         DriversTableView driversTableView,
         TyreCardView tyreCardView,
@@ -59,7 +63,10 @@ public partial class MainWindowViewModel : ObservableObject
         DamageCardView damageCardView,
         DriversRankingView driversRankingView,
         DriverInfoView driverInfoView,
+        RaceLapsView raceLapsView,
         DriversRankingViewModel driversRankingViewModel,
+        DriverInfoViewModel driverInfoViewModel,
+        RaceLapsViewModel raceLapsViewModel,
         DatabaseService databaseService)
     {
         SessionInfoView = sessionInfoView;
@@ -76,8 +83,11 @@ public partial class MainWindowViewModel : ObservableObject
         _damageCardView = damageCardView;
         _driversRankingView = driversRankingView;
         _driverInfoView = driverInfoView;
+        _raceLapsView = raceLapsView;
         
         _driversRankingViewModel = driversRankingViewModel;
+        _driverInfoViewModel = driverInfoViewModel;
+        _raceLapsViewModel = raceLapsViewModel;
         
         _databaseService = databaseService;
 
@@ -208,15 +218,27 @@ public partial class MainWindowViewModel : ObservableObject
         CurrentPageView = _driversRankingView;
     }
 
+    [RelayCommand]
     private void ShowDriverInfoPage(Driver driver)
     {
         if (driver == null) return;
 
         _currentPage = Page.DriverInfo;
         var driverInfoViewModel = new DriverInfoViewModel(_databaseService, driver);
-    
-        _driverInfoView.DataContext = driverInfoViewModel;
 
+        if (_driverInfoView.DataContext is DriverInfoViewModel previousViewModel)
+        {
+            previousViewModel.RaceSelected -= ShowLapsPage;
+            previousViewModel.GoBackRequested -= async () =>
+            {
+                _currentPage = Page.Ranking;
+                _driversRankingView.DataContext = _driversRankingViewModel;
+                await _driversRankingViewModel.LoadDriversAsync();
+                CurrentPageView = _driversRankingView;
+            };
+        }
+
+        driverInfoViewModel.RaceSelected += ShowLapsPage;
         driverInfoViewModel.GoBackRequested += async () =>
         {
             _currentPage = Page.Ranking;
@@ -225,7 +247,32 @@ public partial class MainWindowViewModel : ObservableObject
             CurrentPageView = _driversRankingView;
         };
 
+        _driverInfoView.DataContext = driverInfoViewModel;
         CurrentPageView = _driverInfoView;
+    }
+    
+    [RelayCommand]
+    private async Task ShowLapsPageAsync(RaceEntry raceEntry)
+    {
+        if (raceEntry == null) return;
+
+        _currentPage = Page.Laps;
+        var raceLapsViewModel = new RaceLapsViewModel(_databaseService, raceEntry);
+
+        raceLapsViewModel.GoBackRequested += async () =>
+        {
+            _currentPage = Page.DriverInfo;
+            await _driverInfoViewModel.LoadDriverStats();
+            CurrentPageView = _driverInfoView;
+        };
+
+        _raceLapsView.DataContext = raceLapsViewModel;
+        CurrentPageView = _raceLapsView;
+    }
+
+    private void ShowLapsPage(RaceEntry raceEntry)
+    {
+        ShowLapsPageAsync(raceEntry).GetAwaiter().GetResult();
     }
     
     private void RemoveFromParent(UIElement element)

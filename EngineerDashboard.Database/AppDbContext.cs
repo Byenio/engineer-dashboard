@@ -134,6 +134,14 @@ public class AppDbContext : DbContext
                 .HasForeignKey<RaceResult>(e => e.race_entry_id)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+        
+        modelBuilder.Entity<TyreCompound>(entity =>
+        {
+            entity.ToTable("tyre_compounds");
+            entity.HasKey(e => e.id);
+            entity.Property(e => e.id).ValueGeneratedNever();
+            entity.Property(e => e.name).IsRequired().HasMaxLength(100);
+        });
 
         modelBuilder.Entity<Lap>(entity =>
         {

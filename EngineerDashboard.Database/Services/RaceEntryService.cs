@@ -30,6 +30,19 @@ public class RaceEntryService
             .Include(entry => entry.race)
             .Include(entry => entry.race_result)
             .Include(entry => entry.race.track)
+            .OrderByDescending(re => re.race.date)
             .ToListAsync();
+    }
+    
+    public static async Task<int> GetDriverRaceEntriesCount(AppDbContext context, int driverId)
+    {
+        if (!await context.Drivers.AnyAsync(d => d.id == driverId))
+            throw new InvalidOperationException("Driver not found");
+
+        var races = await context.RaceEntries
+            .Where(entry => entry.driver_id == driverId)
+            .CountAsync();
+        
+        return races;
     }
 }

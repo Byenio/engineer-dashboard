@@ -28,7 +28,7 @@
         <converters:RankToBrushConverter x:Key="RankToBrushConverter" />
         <converters:TeamToBrushConverter x:Key="TeamToBrushConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="260 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -40,14 +40,16 @@
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
             <ui:TextBlock Grid.Column="0" Text="ID" Style="{StaticResource HeaderContent}" />
             <ui:TextBlock Grid.Column="1" Text="Name" Style="{StaticResource HeaderContent}" />
             <ui:TextBlock Grid.Column="2" Text="Team" Style="{StaticResource HeaderContent}" />
-            <ui:TextBlock Grid.Column="3" Text="Elo" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
-            <ui:TextBlock Grid.Column="4" Text="Rank" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="3" Text="Races" Style="{StaticResource HeaderContent}" />
+            <ui:TextBlock Grid.Column="4" Text="Elo" Style="{StaticResource HeaderContent}" TextAlignment="Right" />
+            <ui:TextBlock Grid.Column="5" Text="Rank" Style="{StaticResource HeaderContent}" />
         </Grid>
 
         <ui:ListView Grid.Row="1"
@@ -55,6 +57,7 @@
                      IsSynchronizedWithCurrentItem="True"
                      BorderThickness="0"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.CanContentScroll="False"
                      Margin="80 0">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
@@ -70,6 +73,7 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
@@ -80,8 +84,9 @@
                                 <Binding Path="team.name" Converter="{StaticResource TeamToBrushConverter}" />
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <TextBlock Grid.Column="3" Text="{Binding elo}" Style="{StaticResource CellContent}" TextAlignment="Right" />
-                        <TextBlock Grid.Column="4" Style="{StaticResource CellContent}">
+                        <TextBlock Grid.Column="3" Text="{Binding race_entries.Count}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="4" Text="{Binding elo}" Style="{StaticResource CellContent}" TextAlignment="Right" />
+                        <TextBlock Grid.Column="5" Style="{StaticResource CellContent}">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">
                                     <Binding Path="rank.icon" />
