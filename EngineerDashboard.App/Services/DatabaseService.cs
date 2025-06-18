@@ -377,6 +377,20 @@ public class DatabaseService : IDisposable
         
         return races;
     }
+
+    public async Task<Collection<Lap>> GetLaps(int raceEntryId)
+    {
+        var laps = await LapService.GetLaps(_context, raceEntryId);
+        
+        return laps;
+    }
+
+    public async Task<Collection<PitStop>> GetPitStops(int raceEntryId)
+    {
+        var pitStops = await PitStopService.GetPitStops(_context, raceEntryId);
+
+        return pitStops;
+    }
     
     #endregion
     

@@ -7,7 +7,7 @@ using EngineerDashboard.Database.Models;
 
 namespace EngineerDashboard.App.ViewModels;
 
-public partial class DriverInfoViewModel: ObservableObject
+public partial class DriverInfoViewModel : ObservableObject
 {
     private readonly DatabaseService _databaseService;
     
@@ -25,6 +25,8 @@ public partial class DriverInfoViewModel: ObservableObject
     private ObservableCollection<RaceEntry> _races = new();
 
     public event Action GoBackRequested;
+    
+    public event Action<RaceEntry> RaceSelected;
 
     public ObservableCollection<RaceEntry> Races
     {
@@ -51,7 +53,14 @@ public partial class DriverInfoViewModel: ObservableObject
         GoBackRequested.Invoke();
     }
     
-    private async Task LoadDriverStats()
+    [RelayCommand]
+    private void RaceDoubleClick(RaceEntry raceEntry)
+    {
+        if (raceEntry != null)
+            RaceSelected?.Invoke(raceEntry);
+    }
+    
+    public async Task LoadDriverStats()
     {
         CareerRaces = await _databaseService.GetDriverRacesCount(DriverId);
         CareerWins = await _databaseService.GetDriverWinsCount(DriverId);

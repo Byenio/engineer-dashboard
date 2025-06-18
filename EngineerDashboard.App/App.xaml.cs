@@ -23,16 +23,15 @@ public partial class App : Application
         services.AddSingleton<TelemetryProvider>();
         services.AddSingleton<TelemetryLoggerService>();
         
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddDbContextFactory<AppDbContext>(options =>
         {
             var connectionString = $"Host={Environment.GetEnvironmentVariable("DATABASE_ADDRESS")};" +
                                    $"Port={Environment.GetEnvironmentVariable("DATABASE_PORT")};" +
                                    $"Database={Environment.GetEnvironmentVariable("DATABASE_NAME")};" +
                                    $"Username={Environment.GetEnvironmentVariable("DATABASE_USER")};" +
                                    $"Password={Environment.GetEnvironmentVariable("DATABASE_PASSWORD")};";
-            
             options.UseNpgsql(connectionString);
-        }, ServiceLifetime.Singleton);
+        });
         services.AddSingleton<DatabaseService>();
         
         services.AddSingleton<MainWindowViewModel>();
@@ -50,64 +49,41 @@ public partial class App : Application
         services.AddSingleton<DamageCardViewModel>();
         services.AddSingleton<DriversRankingViewModel>();
         services.AddSingleton<DriverInfoViewModel>();
+        services.AddSingleton<RaceLapsViewModel>();
 
         services.AddSingleton<Driver>();
+        services.AddSingleton<RaceEntry>();
         
         services.AddSingleton<SessionInfoView>(sp => 
-            new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() }
-        );
-
+            new SessionInfoView { DataContext = sp.GetRequiredService<SessionInfoViewModel>() });
         services.AddSingleton<DriversRowView>(sp => 
-            new DriversRowView { DataContext = sp.GetRequiredService<DriversRowViewModel>() }
-        );
-
+            new DriversRowView { DataContext = sp.GetRequiredService<DriversRowViewModel>() });
         services.AddSingleton<DriversTableView>(sp => 
-            new DriversTableView { DataContext = sp.GetRequiredService<DriversTableViewModel>() }
-        );
-
+            new DriversTableView { DataContext = sp.GetRequiredService<DriversTableViewModel>() });
         services.AddSingleton<TyreCardView>(sp => 
-            new TyreCardView { DataContext = sp.GetRequiredService<TyreCardViewModel>() }
-        );
-
+            new TyreCardView { DataContext = sp.GetRequiredService<TyreCardViewModel>() });
         services.AddSingleton<LapTimeChartView>(sp =>
-            new LapTimeChartView { DataContext = sp.GetRequiredService<LapTimeChartViewModel>() }
-        );
-
+            new LapTimeChartView { DataContext = sp.GetRequiredService<LapTimeChartViewModel>() });
         services.AddSingleton<TyreWearChartView>(sp =>
-            new TyreWearChartView { DataContext = sp.GetRequiredService<TyreWearChartViewModel>() }
-        );
-
+            new TyreWearChartView { DataContext = sp.GetRequiredService<TyreWearChartViewModel>() });
         services.AddSingleton<FuelChartView>(sp =>
-            new FuelChartView { DataContext = sp.GetRequiredService<FuelChartViewModel>() }
-        );
-
+            new FuelChartView { DataContext = sp.GetRequiredService<FuelChartViewModel>() });
         services.AddSingleton<BatteryChartView>(sp =>
-            new BatteryChartView { DataContext = sp.GetRequiredService<BatteryChartViewModel>() }
-        );
-
+            new BatteryChartView { DataContext = sp.GetRequiredService<BatteryChartViewModel>() });
         services.AddSingleton<InputsChartView>(sp =>
-            new InputsChartView { DataContext = sp.GetRequiredService<InputsChartViewModel>() }
-        );
-
+            new InputsChartView { DataContext = sp.GetRequiredService<InputsChartViewModel>() });
         services.AddSingleton<TelemetryChartView>(sp =>
-            new TelemetryChartView { DataContext = sp.GetRequiredService<TelemetryChartViewModel>() }
-        );
-
+            new TelemetryChartView { DataContext = sp.GetRequiredService<TelemetryChartViewModel>() });
         services.AddSingleton<CarInfoCardView>(sp =>
-            new CarInfoCardView { DataContext = sp.GetRequiredService<CarInfoCardViewModel>() }
-        );
-
+            new CarInfoCardView { DataContext = sp.GetRequiredService<CarInfoCardViewModel>() });
         services.AddSingleton<DamageCardView>(sp =>
-            new DamageCardView { DataContext = sp.GetRequiredService<DamageCardViewModel>() }
-        );
-
+            new DamageCardView { DataContext = sp.GetRequiredService<DamageCardViewModel>() });
         services.AddSingleton<DriversRankingView>(sp =>
-            new DriversRankingView { DataContext = sp.GetRequiredService<DriversRankingViewModel>() }
-        );
-
+            new DriversRankingView { DataContext = sp.GetRequiredService<DriversRankingViewModel>() });
         services.AddSingleton<DriverInfoView>(sp =>
-            new DriverInfoView { DataContext = sp.GetRequiredService<DriverInfoViewModel>() }
-        );
+            new DriverInfoView { DataContext = sp.GetRequiredService<DriverInfoViewModel>() });
+        services.AddSingleton<RaceLapsView>(sp =>
+            new RaceLapsView { DataContext = sp.GetRequiredService<RaceLapsViewModel>() });
         
         services.AddSingleton<MainWindow>();
         
@@ -119,19 +95,16 @@ public partial class App : Application
         base.OnStartup(e);
         
         _ = _serviceProvider.GetRequiredService<TelemetryLoggerService>();
-        
         _ = _serviceProvider.GetRequiredService<DatabaseService>();
         
-        var dbContext = _serviceProvider.GetRequiredService<AppDbContext>();
-
+        using var dbContext = _serviceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext();
         if (!dbContext.Database.CanConnect())
         {
             MessageBox.Show(
                 "Database connection could not be established.",
                 "Database connection failure",
                 MessageBoxButton.OK,
-                MessageBoxImage.Error
-                );
+                MessageBoxImage.Error);
             Shutdown();
         }
         

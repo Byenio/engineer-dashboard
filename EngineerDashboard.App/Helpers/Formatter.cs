@@ -52,4 +52,13 @@ public static class     Formatter
             (int)ts.TotalSeconds,
             ts.Milliseconds);
     }
+    
+    public static string FormatMsToPitStopString(uint ms)
+    {
+        TimeSpan ts = TimeSpan.FromMilliseconds(ms);
+
+        return string.Format("{0}.{1:D3}",
+            (int)ts.TotalSeconds,
+            ts.Milliseconds);
+    }
 }

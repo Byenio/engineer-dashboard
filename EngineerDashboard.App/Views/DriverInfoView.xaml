@@ -111,13 +111,13 @@
                      BorderThickness="0"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      Margin="80 0">
-            <!-- <i:Interaction.Triggers> -->
-            <!--     <i:EventTrigger EventName="MouseDoubleClick"> -->
-            <!--         <i:InvokeCommandAction  -->
-            <!--             Command="{Binding DriverDoubleClickCommand}" -->
-            <!--             CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ListView}}" /> -->
-            <!--     </i:EventTrigger> -->
-            <!-- </i:Interaction.Triggers> -->
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction
+                        Command="{Binding RaceDoubleClickCommand}"
+                        CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ListView}}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>

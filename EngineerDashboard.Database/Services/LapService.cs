@@ -1,4 +1,6 @@
-﻿using EngineerDashboard.Database.Models;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using EngineerDashboard.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EngineerDashboard.Database.Services;
@@ -14,5 +16,18 @@ public class LapService
         await context.SaveChangesAsync();
         
         return lap;
+    }
+
+    public static async Task<Collection<Lap>> GetLaps(AppDbContext context, int raceEntryId)
+    {
+        if (!await context.RaceEntries.AnyAsync(re => re.id == raceEntryId))
+            throw new InvalidOperationException("Race entry not found");
+        
+        var laps = await context.Laps
+            .Where(l => l.race_entry_id == raceEntryId)
+            .Include(l => l.tyre_compound)
+            .AsNoTracking()
+            .ToListAsync();
+        return new Collection<Lap>(laps);
     }
 }

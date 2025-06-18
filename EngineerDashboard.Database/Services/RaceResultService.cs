@@ -43,8 +43,6 @@ public class RaceResultService
             .Where(joined => joined.RaceEntry.driver_id == driverId && joined.RaceResult.finish_position == 1)
             .CountAsync();
         
-        Debug.WriteLine(wins);
-        
         return wins;
     }
     
@@ -60,8 +58,6 @@ public class RaceResultService
                 (rr, re) => new {RaceResult = rr, RaceEntry = re})
             .Where(joined => joined.RaceEntry.driver_id == driverId && joined.RaceResult.finish_position <= position)
             .CountAsync();
-
-        Debug.WriteLine(finishes);
         
         return finishes;
     }
@@ -78,8 +74,6 @@ public class RaceResultService
                 (rr, re) => new {RaceResult = rr, RaceEntry = re})
             .Where(joined => joined.RaceEntry.driver_id == driverId)
             .SumAsync(joined => joined.RaceResult.points);
-        
-        Debug.WriteLine(points);
         
         return points;
     }

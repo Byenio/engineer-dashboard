@@ -67,6 +67,16 @@ public static class ColorHelper
         _ => Brushes.Black
     };
     
+    public static Brush GetTyreBrush(string name) => name switch
+    {
+        "SOFT" => Brushes.Red,
+        "MEDIUM" => Brushes.Gold,
+        "HARD" => Brushes.White,
+        "INTER" => Brushes.MediumSeaGreen,
+        "WET" => Brushes.RoyalBlue,
+        _ => Brushes.Black
+    };
+    
     public static Brush GetDrsBrush(byte drsAllowed, byte drsOpen)
     {
         if (drsOpen == 1)
