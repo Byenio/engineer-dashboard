@@ -5,9 +5,9 @@ BEGIN
     IF EXISTS (SELECT 1 FROM race_results WHERE id = race_result_id) THEN
         UPDATE race_results
         SET penalties = new_penalty
-        WHERE id = result_id;
+        WHERE id = race_result_id;
     ELSE
-        RAISE NOTICE 'Nonexistent ID --> %', race_result_id
+        RAISE NOTICE 'Nonexistent ID --> %', race_result_id;
     END IF;
 END;
 $$;
@@ -22,7 +22,7 @@ BEGIN
         SET finish_position = new_position
         WHERE id = race_result_id;
     ELSE
-        RAISE NOTICE 'Nonexistent ID --> %', race_result_id
+        RAISE NOTICE 'Nonexistent ID --> %', race_result_id;
     END IF;
 END;
 $$;
