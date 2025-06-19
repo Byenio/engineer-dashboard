@@ -159,40 +159,62 @@ INSERT INTO tyre_compounds(id, name) VALUES
 CREATE OR REPLACE FUNCTION update_driver_elo()
     RETURNS TRIGGER AS $$
 DECLARE
-    difficulty_multiplier INT;
+    difficulty_multiplier FLOAT;
     start_finish_difference INT;
-    weighted_start_finish_difference FLOAT;
-    weighted_points FLOAT;
-    weighted_dmg FLOAT;
-    weighted_dnf FLOAT;
-    weighted_pen FLOAT;
+    normalized_position_gain FLOAT;
+    normalized_points FLOAT;
+    normalized_dmg FLOAT;
+    normalized_dnf FLOAT;
+    normalized_pen FLOAT;
     current_elo INT;
+    expected_score FLOAT;
+    actual_score FLOAT;
     delta_elo FLOAT;
     new_elo INT;
     driver_id INT;
+    max_positions INT := 20;
+    max_points FLOAT := 25.0;
+    K_factor FLOAT := 24.0;
 BEGIN
-    SELECT re.driver_id, r.ai_difficulty + r.length
+    -- Fetch driver and race details
+    SELECT re.driver_id, (r.ai_difficulty + r.length) / 100.0
     INTO driver_id, difficulty_multiplier
     FROM race_entries re
              JOIN races r ON r.id = re.race_id
     WHERE re.id = NEW.race_entry_id;
 
-    start_finish_difference := NEW.start_position - NEW.finish_position;
-    weighted_start_finish_difference := start_finish_difference * difficulty_multiplier;
-
-    weighted_points := (NEW.points + CASE WHEN NEW.has_fastest_lap THEN 1 ELSE 0 END) * (difficulty_multiplier / 100.0);
-
-    weighted_dmg := (100 - NEW.damage) * (difficulty_multiplier / 100.0);
-
-    weighted_dnf := (CASE WHEN NEW.dnf THEN (20 - NEW.start_position) * difficulty_multiplier ELSE 0 END);
-
-    weighted_pen := NEW.penalties;
-
+    -- Get current Elo
     SELECT elo INTO current_elo FROM drivers WHERE id = driver_id;
-    
-    delta_elo := (weighted_start_finish_difference + weighted_points + weighted_dmg - weighted_dnf - weighted_pen) / GREATEST(current_elo / 10.0, 1.0);
-    new_elo := current_elo + ROUND(delta_elo);
 
+    -- Calculate expected score
+    expected_score := 0.5 / (1.0 + (difficulty_multiplier / (current_elo / 1000.0)));
+    expected_score := LEAST(GREATEST(expected_score, 0.1), 0.9); -- Clamp to avoid extremes
+
+    -- Normalize factors
+    start_finish_difference := NEW.start_position - NEW.finish_position;
+    normalized_position_gain := LEAST(GREATEST(start_finish_difference::FLOAT / max_positions, -1.0), 1.0) * difficulty_multiplier;
+
+    normalized_points := (NEW.points + CASE WHEN NEW.has_fastest_lap THEN 1 ELSE 0 END) / max_points * difficulty_multiplier;
+
+    normalized_dmg := (100 - NEW.damage)::FLOAT / 100.0 * difficulty_multiplier * 0.5;
+
+    normalized_dnf := CASE WHEN NEW.dnf THEN -0.5 * difficulty_multiplier ELSE 0 END;
+
+    normalized_pen := LEAST(NEW.penalties::FLOAT / 10.0, 0.2) * difficulty_multiplier;
+
+    -- Calculate actual score
+    actual_score := (0.4 * normalized_position_gain + 0.3 * normalized_points + 0.2 * normalized_dmg + 0.1 * normalized_dnf - normalized_pen);
+    actual_score := LEAST(GREATEST(actual_score, 0.0), 1.0);
+
+    -- Calculate Elo change
+    delta_elo := K_factor * (actual_score - expected_score);
+    delta_elo := delta_elo;
+
+    -- Update Elo
+    new_elo := current_elo + ROUND(delta_elo);
+    new_elo := GREATEST(new_elo, 0);
+
+    -- Update driver
     UPDATE drivers SET elo = new_elo WHERE id = driver_id;
 
     RETURN NULL;
@@ -228,3 +250,23 @@ CREATE OR REPLACE TRIGGER trg_update_rank_after_elo_update
     FOR EACH ROW
     WHEN (OLD.elo IS DISTINCT FROM NEW.elo)
 EXECUTE FUNCTION update_driver_rank();
+
+
+-- Users
+CREATE ROLE steward WITH LOGIN PASSWORD ']G1.00-R6wW,';
+GRANT CONNECT ON DATABASE telemetry TO steward;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO steward;
+GRANT UPDATE ON race_results TO steward;
+
+
+CREATE ROLE telemetry_client WITH LOGIN PASSWORD '(456Jm928*?0';
+GRANT CONNECT ON DATABASE telemetry TO telemetry_client;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO telemetry_client;
+GRANT INSERT ON drivers, race_entries, races, race_results, laps, pit_stops TO telemetry_client;
+GRANT UPDATE ON drivers TO telemetry_client;
+
+
+CREATE ROLE fia WITH LOGIN PASSWORD 'fh`>`2G1@20V';
+GRANT CONNECT ON DATABASE telemetry TO fia;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO fia;
+GRANT INSERT, UPDATE ON tracks, ranks, teams, drivers TO fia;
