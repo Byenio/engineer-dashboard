@@ -175,7 +175,7 @@ public class DatabaseService : IDisposable
             var lap = new Lap
             {
                 race_entry_id = _raceEntries[i].id,
-                lap_number = lapData.currentLapNum,
+                lap_number = lapData.currentLapNum - 1,
                 tyre_wear = (int)_latestTyreWear[i],
                 tyre_compound_id = _latestVisualTyreCompound[i],
                 current_position = lapData.carPosition,
@@ -222,7 +222,7 @@ public class DatabaseService : IDisposable
             var pitStop = new PitStop
             {
                 race_entry_id = _raceEntries[i].id,
-                lap_number = _lastLoggedLapNums[i],
+                lap_number = _lastLoggedLapNums[i] - 1,
                 pit_stop_time = _latestPitStopTime[i]
             };
 
