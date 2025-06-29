@@ -4,7 +4,7 @@ FROM drivers
 JOIN teams ON teams.id = drivers.team_id
 JOIN ranks ON ranks.id = drivers.rank_id;
 
-CREATE VIEW races_2025 AS
+CREATE VIEW races_this_year AS
 SELECT races.id, races.date, tracks.name, races.ai_difficulty
 FROM races
 JOIN tracks ON tracks.id = races.track_id

@@ -134,7 +134,7 @@ INSERT INTO tracks (id, name) VALUES
     (29, 'Jeddah'),
     (30, 'Miami'),
     (31, 'Las Vegas'),
-    (32, 'Losali');
+    (32, 'Losail');
 
 INSERT INTO teams (id, name) VALUES
     (0, 'Mercedes'),
